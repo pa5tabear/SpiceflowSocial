@@ -1,125 +1,102 @@
-Spiceflow Social
-Spiceflow Social will be a personal planning assistant that helps fill evening time with meaningful activities across the next 30 days. The application will combine data from curated event calendars, intentional relationship lists, personal goals, weather forecasts, and Google Calendar availability to propose balanced suggestions for each open evening block.
+# Spiceflow Social
 
-This master plan outlines the desired capabilities, data inputs, decision logic, and phased roadmap for building the repository.
+*A personal evening planning assistant for crafting meaningful 6–10 PM experiences across the next 30 days.*
 
-Vision & Objectives
-Holistic evening planning – Suggest the best use of every open 6–10 PM slot over the coming month.
-Goal alignment – Prioritize activities that progress clearly defined personal and professional goals.
-Preference awareness – Respect entertainment, intellectual, social, and wellness preferences when evaluating options.
-Balanced wellbeing – Avoid overscheduling intensive fitness or mentally demanding events without adequate recovery.
-Context sensitivity – Account for logistics, weather conditions, and existing commitments to avoid conflicts.
-Key Inputs
-Category	Source	Notes
-Event calendars	Chrome bookmark folder pointing to ~30 public calendars	Need bookmark import/management strategy; each calendar likely iCal/ICS or HTML feeds.
-Goals & preference doc	Markdown/structured document stored in repo	Describes goals, activity preferences, desired outcomes, constraints.
-Relationship list	Document/CSV of people to intentionally contact	Used to suggest "reach out" instead of an event when appropriate.
-Google Calendar	Google Calendar API (OAuth)	Read-only access to determine busy vs. free slots between 6–10 PM.
-Weather	Weather API (e.g., OpenWeather, National Weather Service)	Provide forecasts for outdoor suitability.
-Location profile	Home/typical base location, travel constraints	Used to filter events by travel time and compatibility with existing commitments.
-Core Capabilities
-Calendar ingestion
-Parse bookmark folder export to locate 30 event calendar URLs.
-Normalize event data (title, start/end, location, tags) into unified schema.
-Goals & preferences parsing
-Read structured document describing goals, entertainment vs. intellectual needs, divergent vs. convergent modes, social intent, wellbeing targets, and professional development objectives.
-Extract scoring weights and constraints (e.g., max heavy strength sessions per week).
-Relationship suggestion engine
-Maintain list of priority contacts with desired cadence.
-Recommend outreach during free evenings when no fitting events exist.
-Availability detection
-Authenticate with Google Calendar and fetch events for next 30 days.
-Identify open blocks between 6 PM and 10 PM.
-Weather-aware filtering
-Pull 30-day forecast (hourly/daily granularity as available).
-Block outdoor events when inclement weather (rain, extreme cold) is predicted.
-Conflict-aware recommendations
-Evaluate location feasibility vs. surrounding commitments.
-Avoid suggesting intense fitness sessions on consecutive days if conflicting with goals.
-Balance suggestions across goal categories over the planning horizon.
-Output generation
-Produce daily or weekly recommendation reports (Markdown, email, or dashboard).
-Include rationale referencing goals, preferences, and constraints.
-Decision Logic Overview
-For each date in the next 30 days, extract 6–10 PM availability window from Google Calendar.
-If no free slots, mark day as "scheduled" and store existing commitments.
-If free slots exist:
-Filter candidate events by date, time overlap, location feasibility, and weather.
-Score candidates using weighted criteria derived from goals/preferences:
-Entertainment vs. intellectual stimulation needs.
-Divergent (exploratory) vs. convergent (goal-focused) desires.
-Social connection priorities (e.g., meeting new people, deepening relationships).
-Fitness targets (cardio, strength, recovery spacing).
-Professional advancement opportunities.
-Enforce constraints (e.g., cap strength workouts, ensure variety across week).
-When no event meets thresholds, consider relationship outreach suggestions weighted by cadence and compatibility with goals.
-Output the top suggestion per free evening with justification, recommended preparation, and backup options.
-Data Model Sketch
+## At a Glance
+- Curates events, goals, relationships, weather, and calendar availability into balanced nightly plans.
+- Scores every free evening block against personal objectives, wellbeing guardrails, and contextual constraints.
+- Produces just-in-time recommendations with the rationale, prep notes, and alternates.
 
-Goal: description, category (fitness, professional, social, etc.), priority weight.
-Preference: structured rules (e.g., desired entertainment vs. intellectual balance).
-Event: normalized fields plus derived attributes (intensity level, travel time).
-Recommendation: stores final suggestion, reasoning, and confidence.
-Integration Considerations
-Chrome bookmark ingestion – Export bookmarks to JSON; parse folder to collect calendar URLs; support manual refresh cadence.
-Calendar formats – Standardize ICS feeds or use scraping adapters for HTML calendars without feeds.
-Authentication – Google OAuth consent screen for calendar access; store tokens securely.
-Weather – Choose API with reliable hourly forecasts; consider caching to minimize calls.
-Location handling – Leverage geocoding APIs to convert event addresses to coordinates; compute travel time via Google Maps or OpenRouteService.
-Scheduling intelligence – Use rule engine or constraint solver to avoid conflicting goals (e.g., repeated heavy workouts).
-Phased Roadmap
-Foundation & Data Structures
-Scaffold repo (Poetry/virtualenv, linting, testing).
-Define configuration files for credentials and personal documents.
-Draft schemas for events, goals, preferences, contacts, and recommendations.
-Calendar & Availability Ingestion
-Implement bookmark parser and calendar fetchers.
-Connect to Google Calendar API for free/busy lookup within 6–10 PM window.
-Store availability timeline for next 30 days.
-Goals & Preference Engine
-Convert personal goals document into structured format (YAML/JSON).
-Build scoring weight calculators and constraint definitions.
-Recommendation Engine MVP
-Combine events, preferences, and availability to produce ranked suggestions.
-Implement simple weather filtering and location distance checks.
-Wellbeing & Weather Enhancements
-Add fatigue/overuse guardrails for fitness suggestions.
-Integrate richer weather rules (precipitation, temperature thresholds).
-Introduce alternative recommendations (relationship outreach, at-home activities).
-Output & Feedback Loop
-Generate recommendation reports (Markdown + optional email).
-Capture user feedback to refine scoring weights.
-Automation & Monitoring
-Schedule nightly run to refresh 30-day plan.
-Add logging, error alerting, and audit trails for suggestions.
-Repository Structure (Planned)
+## Vision & Objectives
+- **Holistic evening planning:** Fill each 6–10 PM slot with the highest-impact activity.
+- **Goal alignment:** Move personal and professional objectives forward every week.
+- **Preference awareness:** Respect entertainment, intellectual, social, and wellness preferences.
+- **Balanced wellbeing:** Prevent overloading intense workouts or mentally taxing events.
+- **Context sensitivity:** Account for schedule conflicts, location logistics, and weather.
+
+## Key Inputs
+| Category | Source | Purpose |
+| --- | --- | --- |
+| Event calendars | Chrome bookmark folder (~30 public calendars) | Load raw activity options (ICS/HTML feeds). |
+| Goals & preferences | Structured doc in `docs/` | Define weights, constraints, and desired outcomes. |
+| Relationship list | CSV/YAML (git-ignored) | Surface intentional outreach when events are weak fits. |
+| Google Calendar | OAuth API (read-only) | Detect free vs. busy evening blocks. |
+| Weather | Hourly/daily API | Filter or favor outdoor activities based on forecast. |
+| Location profile | Home base & travel constraints | Validate travel feasibility relative to commitments. |
+
+## Core Capabilities
+- **Calendar ingestion:** Parse exported bookmarks, normalize ICS/HTML event feeds, and harmonize titles, times, and locations.
+- **Goal & preference engine:** Translate written goals into weights and constraints (e.g., cap strength workouts per week).
+- **Relationship suggestions:** Track outreach cadence and propose contact when no event clears thresholds.
+- **Availability detection:** Fetch 30-day Google Calendar events to locate open 6–10 PM blocks.
+- **Weather-aware filtering:** Block or highlight outdoor options based on forecast conditions.
+- **Constraint-aware recommendations:** Score options, enforce wellbeing rules, and balance goal categories.
+- **Report generation:** Deliver daily or weekly briefings via Markdown, email, or dashboard.
+
+## Decision Flow
+1. Enumerate the next 30 days of 6–10 PM availability from Google Calendar.
+2. Collect candidate events that match date, timing, travel, and weather constraints.
+3. Score each candidate using goals, preferences, social priorities, fitness targets, and professional aims.
+4. Apply guardrails (variety, fatigue limits, cadence requirements) to filter the list.
+5. When no event qualifies, promote relationship outreach or at-home activities.
+6. Publish top recommendations with reasoning, prep notes, and backup options.
+
+## Data Model (Draft)
+- **Goal:** Description, category (fitness, professional, social, etc.), priority weight.
+- **Preference:** Structured rules describing desired entertainment vs. intellectual balance, divergent vs. convergent modes, and recovery spacing.
+- **Event:** Normalized fields plus derived attributes (intensity, travel time, weather sensitivity).
+- **Recommendation:** Final suggestion, justification, confidence score, backup list.
+
+## Integration Notes
+- Export Chrome bookmarks to JSON, then parse to refresh event calendars.
+- Standardize on ICS feeds when possible; fall back to scraping adapters for HTML calendars.
+- Use Google OAuth with securely stored tokens (keyring or encrypted secrets).
+- Select a reliable weather API and cache responses to control quota usage.
+- Convert addresses to coordinates via geocoding and compute travel times (Google Maps or OpenRouteService).
+- Consider a rule engine or lightweight constraint solver for schedule balancing.
+
+## Implementation Roadmap
+| Phase | Focus | Key Deliverables |
+| --- | --- | --- |
+| **Foundation** | Repo scaffolding & data contracts | Poetry/virtualenv setup, lint/test config, base schemas. |
+| **Ingestion** | Calendars & availability | Bookmark parser, event normalization, Google Calendar free/busy timeline. |
+| **Preferences** | Goals & weights | Machine-readable goals document, constraint calculators, scoring weights. |
+| **Recommendation MVP** | Initial suggestions | Combine events + preferences, simple weather checks, distance gating. |
+| **Wellbeing Enhancements** | Guardrails & alternates | Fatigue rules, richer weather logic, relationship outreach fallback. |
+| **Outputs & Feedback** | Reports & learning | Markdown/email reports, feedback capture, weight tuning hooks. |
+| **Automation** | Reliability | Nightly scheduler, logging, error alerts, audit trail. |
+
+## Planned Repository Structure
+```
 spiceflow-social/
-├── README.md                # Master plan (this document)
+├── README.md
 ├── docs/
-│   ├── goals_preferences.md # Source document with goals & preferences
-│   ├── data_model.md        # Expanded schemas and ERD details
-│   └── api_integrations.md  # OAuth and API setup guides
-├── data/
-│   ├── bookmarks.json       # Chrome bookmark export (git-ignored)
-│   ├── contacts.yaml        # Intentional relationship list (git-ignored)
-│   └── goals.yaml           # Structured goals (git-ignored)
+│   ├── goals_preferences.md
+│   ├── data_model.md
+│   └── api_integrations.md
+├── data/              # git-ignored personal inputs
+│   ├── bookmarks.json
+│   ├── contacts.yaml
+│   └── goals.yaml
 ├── src/
-│   ├── ingestion/           # Calendar, weather, contact ingestion modules
-│   ├── scheduling/          # Availability logic and recommendation engine
-│   ├── scoring/             # Goal alignment and constraint evaluators
-│   └── outputs/             # Report generation modules
-└── tests/                   # Unit and integration tests
-Sensitive files (credentials, personal lists) should remain outside version control and referenced through environment variables or encrypted storage.
+│   ├── ingestion/
+│   ├── scheduling/
+│   ├── scoring/
+│   └── outputs/
+└── tests/
+```
 
-Security & Privacy Notes
-Store OAuth tokens securely (e.g., keyring, encrypted secrets file).
-Avoid committing personal data; use .gitignore for documents containing contacts and goals.
-Consider anonymized logging for recommendation rationales.
-Implement permission boundaries if sharing repo (e.g., separate config repo with encrypted data).
-Next Steps
-Finalize the goals/preferences document structure and convert to machine-readable format.
-Gather the list of event calendar URLs and verify access methods (ICS vs. HTML).
-Set up Google Cloud project for Calendar API credentials and configure OAuth flow.
-Choose weather API provider and obtain API keys.
-Begin implementing ingestion pipelines and baseline recommendation heuristics.
-This plan provides the foundation for the Spiceflow Social repository. Subsequent commits can follow the phased roadmap to deliver a personal evening planning assistant that balances entertainment, growth, social connection, and wellbeing.
+## Security & Privacy
+- Keep personal documents out of version control; rely on `.gitignore` and encrypted storage.
+- Secure OAuth tokens (keyring, encrypted secrets files) and restrict API scopes to read-only where possible.
+- Use anonymized logging for recommendation rationales when sharing metrics.
+- Isolate sensitive configs if collaborating (e.g., encrypted config repo).
+
+## Immediate Next Steps
+- Finalize the structured goals and preferences document format (YAML/JSON).
+- Aggregate the event calendar URLs and confirm ICS vs. HTML feed handling.
+- Set up a Google Cloud project for Calendar API credentials and the OAuth consent screen.
+- Choose a weather API provider and obtain credentials.
+- Begin implementing ingestion pipelines and baseline scoring heuristics.
+
+This roadmap provides the scaffolding for building a personal evening planning assistant that balances entertainment, growth, connection, and wellbeing.
