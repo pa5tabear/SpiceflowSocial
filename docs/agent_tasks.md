@@ -1,27 +1,35 @@
-# AI Programming Agent Responsibilities
+# AI Programming Agent Responsibilities (Notion-Integrated)
 
-## Data Ingestion & Normalization
-- Import and parse calendar feeds from the curated bookmark export, normalizing event metadata into a unified schema.
-- Sync Google Calendar free/busy data for the next 30 days within the 6–10 PM window and flag conflicts.
-- Hydrate goal, preference, and relationship documents into typed domain models, validating required fields and defaults.
-- Enrich events with derived attributes (intensity, category, travel estimates) using location data and third-party services.
+## Notion Synchronization
+- Connect to designated Notion databases (Goals & Preferences, Relationship Directory, Event Calendar Sources, Feedback Log, Daily Journals, Weekly Review Hub) via integration token with minimal scopes.
+- Normalize Notion records into internal domain models, tracking `last_edited_time` for incremental syncs.
+- Write suggestion objects and weekly recommendation summaries back into Notion (e.g., "Pending Suggestions" and "Weekly Review Hub" views) without altering approved human-authored entries directly.
 
-## Scoring & Decision Logic
-- Maintain weighting functions and constraint rules derived from human-authored goals and wellbeing limits.
-- Score candidate activities against entertainment, intellectual, social, wellness, and professional objectives.
-- Apply guardrails such as fatigue management, diversity quotas, and cadence requirements for outreach.
-- Resolve ties or missing candidates by escalating to alternative recommendations (relationship outreach, at-home options).
+## Journaling & Feedback Analysis
+- Process new daily journal entries with NLP pipelines (sentiment, key phrase extraction, topic clustering) to detect shifts in goals, relationship sentiments, or emerging interests.
+- Cross-reference feedback log outcomes to identify patterns in accepted vs. rejected recommendations.
+- Generate suggestion drafts for goal adjustments, relationship cadence tweaks, or new event sources, tagging each with confidence and rationale.
 
-## Context Awareness
-- Integrate weather forecasts to suppress or boost outdoor activities based on threshold logic.
-- Combine location feasibility, travel time, and surrounding commitments to ensure logistical viability.
+## Event Ingestion & Context Enrichment
+- Read the Event Calendar Sources database to assemble scraping targets (ICS feeds, newsletters, HTML pages) and ingest fresh events on the configured schedule.
+- Enrich events with travel-time estimates, intensity classifications, and weather sensitivity metadata using external APIs.
+- Maintain availability timelines by syncing Google Calendar free/busy data for 6–10 PM windows.
+- Pull weather forecasts and location data to apply contextual filters before scoring.
 
-## Output & Feedback Loop
-- Generate daily or weekly recommendation briefings (Markdown, email, dashboard) with justifications and preparation notes.
-- Capture user feedback on delivered plans and update scoring weights or constraint parameters accordingly.
-- Log decision rationale, data sources, and confidence metrics for auditing and future tuning.
+## Recommendation & Review Workflow
+- Run weekly (configurable) recommendation cycles that produce a 30-day lookahead of evening suggestions with ranked options and fallback activities.
+- Post recommendation summaries to the Weekly Review Hub, including justification, preparation notes, and backup choices.
+- Monitor approval statuses and feed results into the feedback log for continuous learning.
 
-## Operations & Automation
-- Schedule recurring runs (e.g., nightly) that refresh the 30-day planning horizon.
-- Monitor ingestion errors, API quota usage, and authentication health, raising alerts when intervention is required.
-- Guard sensitive data by honoring secret storage policies and ensuring personal documents remain outside version control.
+## Suggestion Lifecycle Automation
+- When humans approve suggestions in Notion, queue update jobs that apply the accepted changes to the relevant databases (e.g., update goal weighting fields, add a new calendar source entry).
+- Respect "Rejected" or "Deferred" statuses by suppressing repeated proposals for a configurable cool-down period.
+- Maintain audit logs linking suggestions to their originating journal entries or feedback signals.
+
+## Operations & Safety
+- Schedule daily lightweight syncs (journals, feedback) and weekly deep runs (event scraping, recommendation refresh, suggestion drafting).
+- Handle API rate limits and failures gracefully with retries and notifications.
+- Protect secrets (Notion token, Google credentials, weather/travel keys) using environment variables or secret managers.
+- Expose observability hooks (metrics, logs, alerts) to signal integration health and data drift.
+
+These responsibilities ensure the agent automates intelligence and orchestration while leaving strategic control and approvals firmly in human hands within Notion.
