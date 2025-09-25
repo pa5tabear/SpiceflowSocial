@@ -1,0 +1,52 @@
+{
+  "parent": {
+    "type": "page_id",
+    "page_id": "PARENT_PAGE_ID"
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {"content": "Relationship Directory"}
+    }
+  ],
+  "icon": {
+    "type": "emoji",
+    "emoji": "🤝"
+  },
+  "properties": {
+    "Name": {"title": {}},
+    "Tier": {
+      "select": {
+        "options": [
+          {"name": "Inner Circle", "color": "purple"},
+          {"name": "Active", "color": "blue"},
+          {"name": "Extended", "color": "green"}
+        ]
+      }
+    },
+    "Desired Cadence": {
+      "select": {
+        "options": [
+          {"name": "Weekly", "color": "red"},
+          {"name": "Biweekly", "color": "orange"},
+          {"name": "Monthly", "color": "yellow"},
+          {"name": "Quarterly", "color": "gray"}
+        ]
+      }
+    },
+    "Last Contact": {"date": {}},
+    "Preferred Channels": {"multi_select": {}},
+    "Goals Linked": {"relation": {"database_id": "GOALS_DATABASE_ID"}},
+    "Notes": {"rich_text": {}},
+    "Next Touch": {"date": {}},
+    "Status": {
+      "status": {
+        "options": [
+          {"name": "On Track", "color": "green"},
+          {"name": "Needs Outreach", "color": "yellow"},
+          {"name": "Dormant", "color": "gray"}
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "parent": {
+    "type": "page_id",
+    "page_id": "PARENT_PAGE_ID"
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {"content": "Recommendation Feedback"}
+    }
+  ],
+  "icon": {
+    "type": "emoji",
+    "emoji": "📝"
+  },
+  "properties": {
+    "Recommendation": {"title": {}},
+    "Decision": {
+      "select": {
+        "options": [
+          {"name": "Approved", "color": "green"},
+          {"name": "Rejected", "color": "red"},
+          {"name": "Deferred", "color": "yellow"}
+        ]
+      }
+    },
+    "Decision Date": {"date": {}},
+    "Reason": {"rich_text": {}},
+    "Tags": {"multi_select": {}},
+    "Confidence": {"number": {"format": "percent"}},
+    "Linked Goal": {"relation": {"database_id": "GOALS_DATABASE_ID"}},
+    "Linked Relationship": {"relation": {"database_id": "RELATIONSHIPS_DATABASE_ID"}},
+    "Next Action": {"rich_text": {}}
+  }
+}

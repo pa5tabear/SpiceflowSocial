@@ -1,53 +1,60 @@
 # Notion Integration Architecture
 
-Spiceflow Social uses Notion as the system of record for strategic inputs and feedback while delegating automation and analysis to the agentic backend. This document outlines the core Notion databases, synchronization flows, and review cadences.
+Spiceflow Social uses Notion's **official** MCP server (`@notionhq/notion-mcp-server`) to keep Notion as the authoritative store for strategic data while enabling agentic workflows. The server mirrors Notion's OpenAPI surface and works over stdio or authenticated HTTP.
 
 ## Notion Data Surfaces
 | Database / Page | Purpose | Key Fields | Sync Direction |
 | --- | --- | --- | --- |
-| Goals & Preferences | Capture long-term objectives, wellbeing guardrails, weighting factors, and qualitative context. | Goal name, category, priority, constraints, notes, last reviewed date. | Notion ➜ Spiceflow (read), Suggestions ➜ Notion (write via proposal sub-page). |
-| Relationship Directory | Track relationship tiers, outreach cadence, last contact, and qualitative context. | Person, priority tier, desired cadence, last touchpoint, notes. | Notion ➜ Spiceflow (read), Suggestions ➜ Notion (write). |
-| Event Calendar Sources | Maintain authoritative list of event feeds or web sources to scrape. | Source name, URL, tags, location radius, verification status. | Notion ➜ Spiceflow (read), Suggestions ➜ Notion (write). |
-| Personal Feedback Log | Record approvals / rejections of recommendations and any manual notes. | Recommendation ID, outcome, feedback text, tags. | Notion ➜ Spiceflow (read). |
-| Daily Journals | Free-form daily reflections used to detect evolving goals and relationship cues. | Date, mood metrics, highlights, challenges, free-write content. | Notion ➜ Spiceflow (read), Summaries ➜ Notion (write back optional). |
-| Weekly Review Hub | Aggregates proposed revisions, selected events, and recap of the past week. | Week range, pending suggestions, approved updates, calendar commitments. | Spiceflow ➜ Notion (write), Human ➜ Notion (approve). |
+| Goals & Preferences | Capture long-term objectives, wellbeing guardrails, weighting factors, and qualitative context. | Goal name, category, priority, constraints, notes, last reviewed date. | Notion ➜ Spiceflow (read), Suggestions ➜ Notion (write via Pending Suggestions). |
+| Relationship Directory | Track tiers, outreach cadence, last touch, and context notes. | Person, tier, desired cadence, last contact, next touch, notes. | Notion ➜ Spiceflow; cadence tweaks proposed ➜ Notion. |
+| Event Calendar Sources | Authoritative list of newsletters, ICS feeds, and websites to scrape. | Source name, URL, topic tags, geo radius, cadence, status. | Notion ➜ Spiceflow; additions/removals proposed ➜ Notion. |
+| Pending Suggestions | Queue of AI-drafted updates awaiting approval. | Suggestion summary, category, confidence, linked entities, status. | Spiceflow ➜ Notion (write/read). |
+| Evening Recommendations | Weekly 30-day plan with rationale and backups. | Date, recommendation text, linked goals/relationships, intensity, weather risk, status. | Spiceflow ➜ Notion (write); approvals ➜ Spiceflow. |
+| Recommendation Feedback | Decisions and qualitative rationale for each recommendation. | Recommendation ref, decision, reason, tags, confidence. | Notion ➜ Spiceflow. |
+| Daily Journal | Free-form reflections for NLP. | Date, mood/energy, highlights, challenges, tags, linked goals/relationships. | Notion ➜ Spiceflow (read), optional summary snippets ➜ Notion. |
+| Weekly Review Hub | Central review dashboard. | Week range, pending suggestions view, approved events, notes. | Spiceflow ➜ Notion (populate blocks), Human ➜ Notion (approve/comment). |
+
+Templates for each database live in `docs/notion_templates/`. Use `docs/notion_bootstrap.md` for setup instructions.
 
 ## Integration Components
-- **Notion Sync Service:** Periodically polls the relevant databases using the Notion API, normalizes records, and pushes them into the internal datastore used by the recommendation engine.
-- **Journal Analyzer:** Processes new daily journal entries through NLP pipelines to detect emerging themes, shifts in motivation, relationship signals, and event interests. Outputs candidate updates tagged with confidence levels.
-- **Suggestion Generator:** Aggregates signals from journal analysis, feedback logs, and engagement metrics to draft proposed revisions for goals, relationships, and calendar sources. Suggestions are written back into the Weekly Review Hub for human approval.
-- **Web Scraper Orchestrator:** Reads the Notion Event Calendar Sources database, fetches fresh event data from listed feeds, and stores normalized events for scoring.
-- **Recommendation Engine:** Combines normalized events, availability (from Google Calendar), goals/preferences, relationship status, and weather to rank evening options for the next 30 days.
-- **Approval & Logging Layer:** Posts recommended events and rationale into the Weekly Review Hub, tracks approvals, and updates the feedback log.
+- **Official MCP Bridge:** Developers run `@notionhq/notion-mcp-server` locally (or via Docker/hosted) to expose Notion API endpoints as MCP tools. The agent consumes these to provision and maintain databases.
+- **Notion Sync Service:** Ingests data via MCP tools (development) or the Notion SDK (production pipeline), storing normalized records and `last_edited_time` checkpoints.
+- **Journal Analyzer:** Applies NLP to new journal entries to detect evolving themes, mood trends, and relationship cues. Generates candidate suggestions with provenance.
+- **Suggestion Generator:** Combines journal insights, feedback outcomes, and goal progress metrics to populate Pending Suggestions with confidence scores and rationale.
+- **Web Scraper Orchestrator:** Fetches activities from Event Calendar Sources, normalizes metadata, and caches events for scoring.
+- **Recommendation Engine:** Blends events, availability, goals, relationships, weather, and travel friction into weekly 30-day plans.
+- **Approval & Logging Layer:** Writes recommendation packets and suggestion drafts to Notion, tracks approval status changes, and logs the final decisions for audit.
 
 ## Cadences & Triggers
 | Cadence | Activities |
 | --- | --- |
-| Daily | Sync new journal entries, refresh feedback log, update relationship last-contact dates, run quick event fetch for same-week adjustments. |
-| Weekly (default, configurable) | Run full event scrape, recompute 30-day recommendation horizon, draft suggestion batch for goals/relationships/calendar sources, populate Weekly Review Hub page. |
-| Monthly (optional) | Deep-dive analysis of goal progress, restructure weighting logic, escalate high-confidence suggestions for human review. |
+| Daily | Sync journals and feedback, refresh relationship touchpoints, ingest late-breaking events. |
+| Weekly (default) | Full event scrape, recompute 30-day plan, draft suggestion batch, publish Weekly Review packet. |
+| Monthly | Deep progress review, rotate calendar sources, surface structural goal adjustments. |
 
-Cadences should remain configurable via environment variables or Notion configuration properties to allow weekly vs. monthly review flexibility.
+Cadences should be configurable (environment variables + Notion properties) and visible in the Weekly Review Hub.
 
 ## Human-in-the-Loop Workflow
-1. **Automated Intake:** Notion sync service pulls the latest data for goals, relationships, calendar sources, feedback, and journals.
-2. **Analysis & Suggestion Drafting:** Journal analyzer and suggestion generator produce structured proposals (e.g., "Increase strength training cap" or "Add XYZ event newsletter").
-3. **Review Surface:** Proposals are written to a "Pending Suggestions" linked database under the Weekly Review Hub with status fields (`Proposed`, `Accepted`, `Rejected`, `Deferred`).
-4. **Human Approval:** You review suggestions on the weekly cadence, adjusting statuses and optionally editing details.
-5. **Actioning:** Approved suggestions trigger updates in their source databases (e.g., modify an entry in Goals & Preferences) via automation tasks.
-6. **Feedback Loop:** Outcomes and human decisions are logged for future tuning.
+1. **Sync:** Official MCP server syncs Notion databases into internal models alongside Google availability and weather data.
+2. **Analyze:** Journal analyzer and scoring heuristics produce candidate suggestions and events.
+3. **Draft:** Suggestions enter Pending Suggestions with `Proposed` status; weekly recommendations post to Evening Recommendations.
+4. **Review:** You approve/decline items in Notion (Weekly Review Hub). Approved suggestions trigger updates; rejections are logged with rationale.
+5. **Apply:** Agent updates authoritative databases via MCP/SDK and records the action in Recommendation Feedback.
+6. **Learn:** Feedback loops adjust scoring weights, suppression timers, and outreach cadences.
 
 ## Security & Access
-- Use a dedicated Notion integration token with scoped database access.
-- Store the token in secret management (environment variable or vault) and do not commit to version control.
-- Maintain an audit log of read/write actions to trace automated changes and approvals.
+- Use scoped integration capabilities (e.g., read-only during initial testing, upgrade to write when ready).
+- Share access only to the root page and databases Spiceflow should manage.
+- Store `NOTION_TOKEN` securely (env vars, secret managers); rotate periodically.
+- Log every automated write (tooltip, Pending Suggestions, recommendation updates) for transparency.
+- Consider Notion's hosted MCP for production to avoid local token storage.
 
-## Next Steps for Implementation
-1. Model the Notion databases and export their schemas for use in SDK integrations.
-2. Scaffold the Notion sync service with typed clients and rate-limit handling.
-3. Implement journaling NLP pipelines (keyword extraction, sentiment, clustering) to generate suggestion candidates.
-4. Build the Weekly Review Hub templates (pending suggestions view, approved recommendations, weekly summary).
-5. Wire the event scraping orchestrator to read from the Event Calendar Sources database and schedule weekly runs.
-6. Design the suggestion approval automation that applies accepted changes back into the appropriate Notion databases.
+## Implementation Next Steps
+1. Build the Notion workspace via `docs/notion_bootstrap.md`.
+2. Generate secrets for Notion, Google, weather, travel, and notifications; store them securely.
+3. Scaffold the Notion sync service to use MCP tools in development and the SDK/OpenAPI client in deployment.
+4. Implement journal NLP pipelines and suggestion drafting logic with provenance tracking.
+5. Create the event ingestion orchestrator and caching layer.
+6. Publish weekly recommendation packets and hook the approval/feedback loop into Notion databases.
 
-This architecture keeps humans in control of strategic documents while letting the agent automate ingestion, analysis, and recommendation workflows on top of Notion-stored knowledge.
+The official server keeps us aligned with Notion's supported tooling while empowering Spiceflow Social to act as an agentic planner inside your workspace.

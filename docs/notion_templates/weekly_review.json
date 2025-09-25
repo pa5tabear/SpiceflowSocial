@@ -1,0 +1,32 @@
+{
+  "parent": {
+    "type": "page_id",
+    "page_id": "PARENT_PAGE_ID"
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {"content": "Weekly Review Tracker"}
+    }
+  ],
+  "icon": {
+    "type": "emoji",
+    "emoji": "📊"
+  },
+  "properties": {
+    "Week": {"title": {}},
+    "Range": {"date": {}},
+    "Pending Suggestions": {"relation": {"database_id": "SUGGESTIONS_DATABASE_ID"}},
+    "Approved Events": {"relation": {"database_id": "RECOMMENDATIONS_DATABASE_ID"}},
+    "Notes": {"rich_text": {}},
+    "Status": {
+      "status": {
+        "options": [
+          {"name": "In Review", "color": "yellow"},
+          {"name": "Approved", "color": "green"},
+          {"name": "Published", "color": "blue"}
+        ]
+      }
+    }
+  }
+}

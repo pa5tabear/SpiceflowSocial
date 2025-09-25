@@ -1,0 +1,52 @@
+{
+  "parent": {
+    "type": "page_id",
+    "page_id": "PARENT_PAGE_ID"
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {"content": "Event Calendar Sources"}
+    }
+  ],
+  "icon": {
+    "type": "emoji",
+    "emoji": "📅"
+  },
+  "properties": {
+    "Name": {"title": {}},
+    "Source Type": {
+      "select": {
+        "options": [
+          {"name": "ICS", "color": "blue"},
+          {"name": "Newsletter", "color": "green"},
+          {"name": "Website", "color": "orange"},
+          {"name": "RSS", "color": "yellow"}
+        ]
+      }
+    },
+    "URL": {"url": {}},
+    "Topic Tags": {"multi_select": {}},
+    "Geo Radius (mi)": {"number": {"format": "number"}},
+    "Verification Status": {
+      "status": {
+        "options": [
+          {"name": "Active", "color": "green"},
+          {"name": "Pending Review", "color": "yellow"},
+          {"name": "Archived", "color": "gray"}
+        ]
+      }
+    },
+    "Last Scraped": {"date": {}},
+    "Refresh Cadence": {
+      "select": {
+        "options": [
+          {"name": "Daily", "color": "red"},
+          {"name": "Weekly", "color": "blue"},
+          {"name": "Monthly", "color": "purple"}
+        ]
+      }
+    },
+    "Notes": {"rich_text": {}}
+  }
+}

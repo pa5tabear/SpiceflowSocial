@@ -1,0 +1,44 @@
+{
+  "parent": {
+    "type": "page_id",
+    "page_id": "PARENT_PAGE_ID"
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {"content": "Daily Journal"}
+    }
+  ],
+  "icon": {
+    "type": "emoji",
+    "emoji": "📔"
+  },
+  "properties": {
+    "Entry": {"title": {}},
+    "Date": {"date": {}},
+    "Energy": {
+      "select": {
+        "options": [
+          {"name": "High", "color": "green"},
+          {"name": "Medium", "color": "yellow"},
+          {"name": "Low", "color": "red"}
+        ]
+      }
+    },
+    "Mood": {
+      "select": {
+        "options": [
+          {"name": "Up", "color": "blue"},
+          {"name": "Balanced", "color": "purple"},
+          {"name": "Stressed", "color": "orange"},
+          {"name": "Reflective", "color": "gray"}
+        ]
+      }
+    },
+    "Highlights": {"rich_text": {}},
+    "Challenges": {"rich_text": {}},
+    "Tags": {"multi_select": {}},
+    "Referenced Goals": {"relation": {"database_id": "GOALS_DATABASE_ID"}},
+    "Referenced Relationships": {"relation": {"database_id": "RELATIONSHIPS_DATABASE_ID"}}
+  }
+}

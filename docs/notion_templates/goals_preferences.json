@@ -1,0 +1,45 @@
+{
+  "parent": {
+    "type": "page_id",
+    "page_id": "PARENT_PAGE_ID"
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {"content": "Goals & Preferences"}
+    }
+  ],
+  "icon": {
+    "type": "emoji",
+    "emoji": "🎯"
+  },
+  "properties": {
+    "Name": {"title": {}},
+    "Category": {
+      "select": {
+        "options": [
+          {"name": "Fitness", "color": "green"},
+          {"name": "Professional", "color": "blue"},
+          {"name": "Social", "color": "purple"},
+          {"name": "Wellbeing", "color": "yellow"},
+          {"name": "Creative", "color": "orange"}
+        ]
+      }
+    },
+    "Priority": {"number": {"format": "number"}},
+    "Weight": {"number": {"format": "number"}},
+    "Constraint": {"rich_text": {}},
+    "Desired Outcome": {"rich_text": {}},
+    "Cadence": {"rich_text": {}},
+    "Last Reviewed": {"date": {}},
+    "Status": {
+      "status": {
+        "options": [
+          {"name": "Active", "color": "green"},
+          {"name": "Monitoring", "color": "yellow"},
+          {"name": "Paused", "color": "gray"}
+        ]
+      }
+    }
+  }
+}

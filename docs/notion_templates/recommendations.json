@@ -1,0 +1,52 @@
+{
+  "parent": {
+    "type": "page_id",
+    "page_id": "PARENT_PAGE_ID"
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {"content": "Evening Recommendations"}
+    }
+  ],
+  "icon": {
+    "type": "emoji",
+    "emoji": "🌆"
+  },
+  "properties": {
+    "Date": {"date": {}},
+    "Recommendation": {"title": {}},
+    "Primary Goal": {"relation": {"database_id": "GOALS_DATABASE_ID"}},
+    "Social Focus": {"relation": {"database_id": "RELATIONSHIPS_DATABASE_ID"}},
+    "Weather Risk": {
+      "select": {
+        "options": [
+          {"name": "Indoor", "color": "blue"},
+          {"name": "Outdoor OK", "color": "green"},
+          {"name": "Weather Risk", "color": "red"}
+        ]
+      }
+    },
+    "Intensity": {
+      "select": {
+        "options": [
+          {"name": "Light", "color": "gray"},
+          {"name": "Moderate", "color": "yellow"},
+          {"name": "Intense", "color": "red"}
+        ]
+      }
+    },
+    "Status": {
+      "status": {
+        "options": [
+          {"name": "Proposed", "color": "yellow"},
+          {"name": "Approved", "color": "green"},
+          {"name": "Declined", "color": "red"}
+        ]
+      }
+    },
+    "Rationale": {"rich_text": {}},
+    "Backup Plan": {"rich_text": {}},
+    "Feedback Link": {"relation": {"database_id": "FEEDBACK_DATABASE_ID"}}
+  }
+}
