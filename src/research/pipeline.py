@@ -40,8 +40,8 @@ def gather_llm_research(
     timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H-%M-%SZ")
 
     for source in sources:
-        context = fetch_context_for_source(source)
-        result = client.summarize_source(source, horizon_days=horizon_days, context=context)
+        # The new agent fetches context internally, so we just call it directly.
+        result = client.summarize_source(source, horizon_days=horizon_days)
         sanitized_events: list[dict[str, Any]] = []
         for event in result.events:
             cleaned = _clean_event_dict(event, default_source=result.slug, horizon_days=horizon_days)
