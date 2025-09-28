@@ -1,0 +1,72 @@
+{
+  "weights": {
+    "goals.career_learning": 0.35,
+    "goals.social_connection": 0.25,
+    "goals.wellbeing_fitness": 0.15,
+    "goals.outdoors_nature": 0.15,
+    "novelty": 0.1,
+    "travel_time_penalty": -0.1,
+    "cost_penalty": -0.05,
+    "evening_penalty": -0.05
+  },
+  "hard_rules": {
+    "no_overlap": true,
+    "evening_quiet_hours": [["22:30", "07:00"]],
+    "max_events_per_week": 6,
+    "budget_cap_per_week": 150
+  },
+  "home_location": "Ann Arbor, MI",
+  "pref_windows": [
+    ["Mon", "Thu", "17:30", "21:30"],
+    ["Sat", "10:00", "22:00"],
+    ["Sun", "11:00", "20:00"]
+  ],
+  "goal_keywords": {
+    "career_learning": [
+      "data center",
+      "ai",
+      "machine learning",
+      "sustainability",
+      "climate",
+      "energy",
+      "entrepreneurship"
+    ],
+    "social_connection": [
+      "networking",
+      "mixer",
+      "community",
+      "social",
+      "reception",
+      "meetup"
+    ],
+    "wellbeing_fitness": [
+      "wellbeing",
+      "mental health",
+      "fitness",
+      "yoga",
+      "run"
+    ],
+    "outdoors_nature": [
+      "outdoor",
+      "nature",
+      "farm",
+      "hike",
+      "garden"
+    ]
+  },
+  "category_weights": {
+    "lecture": 0.1,
+    "climate": 0.2,
+    "career": 0.25,
+    "arts": 0.05,
+    "outdoors": 0.2,
+    "wellbeing": 0.15
+  },
+  "cost_preferences": {
+    "free_bonus": 0.05
+  },
+  "novelty_sources": [
+    "campus_farm",
+    "fresh_check_day"
+  ]
+}

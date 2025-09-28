@@ -1,0 +1,39 @@
+# One source per block. Modes tried in priority: ics -> jsonld -> html -> js.
+# Populate/adjust URLs later when running.
+- name: U-M Museum of Natural History (UMMNH)
+  slug: ummnh
+  type: ics
+  url: "REPLACE_WITH_ICS_URL"
+  city: "Ann Arbor, MI"
+  category: "Lecture"
+
+- name: SEAS Climate Week
+  slug: seas_climate
+  type: jsonld
+  url: "REPLACE_WITH_LANDING_PAGE"
+  category: "Climate"
+
+- name: LSA Physics
+  slug: lsa_physics
+  type: html
+  url: "REPLACE_WITH_EVENTS_PAGE"
+  html:
+    item: "div.event-card"
+    title: "h3.title"
+    datetime: "time.start"
+    endtime: "time.end"
+    location: "div.location"
+    url: "a.more::attr(href)"
+  category: "Lecture"
+
+- name: Michigan Theater
+  slug: mich_theater
+  type: js
+  url: "REPLACE_WITH_EVENTS_PAGE"
+  js:
+    wait: "networkidle"
+    items_selector: "div.event-item"
+    title: "h2"
+    datetime: "time"
+    url: "a::attr(href)"
+  category: "Arts"

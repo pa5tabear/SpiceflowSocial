@@ -1,0 +1,5 @@
+beautifulsoup4>=4.12
+httpx>=0.25
+icalendar>=5.0
+pyyaml>=6.0
+python-dateutil>=2.8

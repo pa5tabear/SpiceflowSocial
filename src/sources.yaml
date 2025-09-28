@@ -1,0 +1,69 @@
+- name: U-M Museum of Natural History
+  slug: ummnh
+  type: ics
+  url: "https://events.umich.edu/day/ical?filter=tags:ummnh&range=45"
+  city: "Ann Arbor, MI"
+  category: "Lecture"
+
+- name: SEAS Climate Week Hub
+  slug: seas_climate
+  type: jsonld
+  url: "https://seas.umich.edu/climate-week"
+  city: "Ann Arbor, MI"
+  category: "Climate"
+
+- name: LSA Physics Events
+  slug: lsa_physics
+  type: html
+  url: "https://lsa.umich.edu/physics/events.html"
+  city: "Ann Arbor, MI"
+  category: "Lecture"
+  html:
+    item: "div.event-card"
+    title: "h3.event-title"
+    datetime: "time.event-date"
+    endtime: "time.event-end"
+    location: "div.event-location"
+    url: "a::attr(href)"
+    notes: "div.event-description"
+
+- name: Michigan Theater
+  slug: michigan_theater
+  type: ics
+  url: "https://michtheater.org/events/?ical=1"
+  city: "Ann Arbor, MI"
+  category: "Arts"
+
+- name: U-M Engineering Project & Design Showcase
+  slug: engineering_showcase
+  type: ics
+  url: "https://mdp.engin.umich.edu/events/?ical=1"
+  city: "Ann Arbor, MI"
+  category: "Career"
+
+- name: Campus Farm HarvestFest
+  slug: campus_farm
+  type: jsonld
+  url: "https://mbgna.umich.edu/campus-farm/harvestfest"
+  city: "Ann Arbor, MI"
+  category: "Outdoors"
+
+- name: Michigan Sport Business Conference
+  slug: msbc
+  type: ics
+  url: "https://umsbc.com/events?ical=1"
+  city: "Ann Arbor, MI"
+  category: "Career"
+
+- name: Fresh Check Day
+  slug: fresh_check_day
+  type: html
+  url: "https://uhs.umich.edu/freshcheckday"
+  city: "Ann Arbor, MI"
+  category: "Wellbeing"
+  html:
+    item: "section.event"
+    title: "h2"
+    datetime: "time"
+    location: "p.location"
+    notes: "div.copy"
