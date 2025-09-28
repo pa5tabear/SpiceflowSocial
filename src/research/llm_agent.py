@@ -202,6 +202,7 @@ class LLMResearchClient:
             "Each event must include ALL fields specified above.",
             "Empty events array if no real events found in date range.",
             "STRICT JSON only (no markdown, no prose).",
+            "If a field is unknown, return null (do NOT fabricate).",
         ])
         return "\n".join(lines)
 
@@ -286,6 +287,69 @@ class LLMResearchClient:
         api_version = os.getenv("SPICEFLOW_GEMINI_API_VERSION", "v1beta")
         url = f"https://generativelanguage.googleapis.com/{api_version}/{self._gemini_model}:generateContent"
         max_tokens = int(os.getenv("SPICEFLOW_GEMINI_MAX_OUTPUT_TOKENS", "8192"))
+        # Define a strict response schema for structured JSON
+        response_schema = {
+            "type": "object",
+            "properties": {
+                "summary": {"type": "string"},
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "title": {"type": "string"},
+                            "description": {"type": ["string", "null"]},
+                            "start_local": {"type": "string"},
+                            "end_local": {"type": ["string", "null"]},
+                            "location": {"type": "string"},
+                            "url": {"type": ["string", "null"]},
+                            "organizer": {"type": ["string", "null"]},
+                            "cost": {"type": ["string", "null"]},
+                            "registration_required": {"type": ["boolean", "null"]},
+                            "capacity_limited": {"type": ["boolean", "null"]},
+                            "accessibility_notes": {"type": ["string", "null"]},
+                            "intensity_level": {"type": ["number", "null"]},
+                            "social_type": {"type": ["string", "null"]},
+                            "learning_format": {"type": ["string", "null"]},
+                            "venue_tier": {"type": ["string", "null"]},
+                            "speaker_quality": {"type": ["string", "null"]},
+                            "follow_up_potential": {"type": ["number", "null"]},
+                            "seasonal_fit": {"type": ["string", "null"]},
+                            "travel_minutes": {"type": ["number", "null"]},
+                            "travel_category": {"type": ["string", "null"]},
+                            "budget_category": {"type": ["string", "null"]},
+                            "exceeds_weekly_budget": {"type": ["boolean", "null"]},
+                            "time_preference_match": {"type": ["number", "null"]},
+                            "career_keyword_matches": {"type": ["array", "null"], "items": {"type": "string"}},
+                            "career_alignment_score": {"type": ["number", "null"]},
+                            "career_rationale": {"type": ["string", "null"]},
+                            "social_keyword_matches": {"type": ["array", "null"], "items": {"type": "string"}},
+                            "social_alignment_score": {"type": ["number", "null"]},
+                            "social_rationale": {"type": ["string", "null"]},
+                            "wellbeing_keyword_matches": {"type": ["array", "null"], "items": {"type": "string"}},
+                            "wellbeing_alignment_score": {"type": ["number", "null"]},
+                            "wellbeing_rationale": {"type": ["string", "null"]},
+                            "outdoors_keyword_matches": {"type": ["array", "null"], "items": {"type": "string"}},
+                            "outdoors_alignment_score": {"type": ["number", "null"]},
+                            "outdoors_rationale": {"type": ["string", "null"]},
+                            "must_see": {"type": ["boolean", "null"]},
+                            "must_see_rationale": {"type": ["string", "null"]},
+                            "quota_categories": {"type": ["array", "null"], "items": {"type": "string"}},
+                            "novelty_score": {"type": ["number", "null"]},
+                            "category": {"type": ["string", "null"]},
+                            "tags": {"type": ["array", "null"], "items": {"type": "string"}},
+                            "uid": {"type": ["string", "null"]},
+                            "notes": {"type": ["string", "null"]},
+                        },
+                        "required": ["title", "start_local", "location"],
+                        "additionalProperties": True,
+                    },
+                },
+            },
+            "required": ["summary", "events"],
+            "additionalProperties": False,
+        }
+
         payload = {
             "contents": [
                 {
@@ -298,10 +362,24 @@ class LLMResearchClient:
                 "topP": 0.95,
                 "topK": 40,
                 "maxOutputTokens": max_tokens,
+                "responseMimeType": "application/json",
+                "responseSchema": response_schema,
             },
         }
         # Enable Google Search tool for retrieval grounding (supported in Gemini API)
         payload["tools"] = [{"googleSearchRetrieval": {}}]
+        # Reinforce behavior with a system instruction
+        payload["systemInstruction"] = {
+            "role": "system",
+            "parts": [
+                {
+                    "text": (
+                        "You are an expert events research assistant. Use Google Search retrieval tools to verify details. "
+                        "Return STRICT JSON that conforms to the provided schema. Do not invent events or fields. If unknown, return null."
+                    )
+                }
+            ],
+        }
 
         with httpx.Client(timeout=120.0) as client:
             response = client.post(url, params={"key": self._api_key}, json=payload)
