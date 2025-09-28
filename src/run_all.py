@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Iterable
@@ -27,11 +28,72 @@ SCRAPERS = {
     "js": js_pull.pull,
 }
 
+SOURCE_LINE_RE = re.compile(r"^\s*-\s*\[(?P<name>.+?)\]\((?P<url>[^)]+)\)\s*(?:\|\s*(?P<meta>.*))?$")
+
+
+def _assign_nested(target: dict[str, Any], dotted_key: str, value: Any) -> None:
+    parts = dotted_key.split(".")
+    current = target
+    for part in parts[:-1]:
+        current = current.setdefault(part, {})
+    current[parts[-1]] = value
+
+
+def parse_markdown_sources(text: str) -> list[dict[str, Any]]:
+    sources: list[dict[str, Any]] = []
+    in_code_block = False
+    for index, raw_line in enumerate(text.splitlines(), start=1):
+        stripped = raw_line.strip()
+        if stripped.startswith("```"):
+            in_code_block = not in_code_block
+            continue
+        if in_code_block or not stripped or stripped.startswith("#"):
+            continue
+        if not stripped.startswith("-[") and not stripped.startswith("- ["):
+            continue
+        match = SOURCE_LINE_RE.match(stripped)
+        if not match:
+            raise ValueError(f"Invalid source definition on line {index}: {raw_line.strip()}")
+        entry: dict[str, Any] = {
+            "name": match.group("name").strip(),
+            "url": match.group("url").strip(),
+        }
+        meta_block = match.group("meta") or ""
+        meta: dict[str, Any] = {}
+        if meta_block:
+            for chunk in meta_block.split("|"):
+                chunk = chunk.strip()
+                if not chunk:
+                    continue
+                if "=" not in chunk:
+                    raise ValueError(f"Missing '=' in metadata chunk '{chunk}' on line {index}")
+                key, value = chunk.split("=", 1)
+                value = value.strip()
+                parsed_value = yaml.safe_load(value) if value else None
+                _assign_nested(meta, key.strip(), parsed_value)
+        entry.update(meta)
+        if "type" not in entry and "kind" in entry:
+            entry["type"] = entry.pop("kind")
+        if "type" not in entry and "parser" in entry:
+            entry["type"] = entry.pop("parser")
+        if "slug" not in entry:
+            raise ValueError(f"Missing 'slug' for source on line {index}")
+        if "type" not in entry:
+            raise ValueError(f"Missing 'type' for source '{entry['slug']}' on line {index}")
+        sources.append(entry)
+    return sources
+
 
 def load_sources(path: Path) -> list[dict[str, Any]]:
     if not path.exists():
-        raise FileNotFoundError(f"sources.yaml not found at {path}")
-    return yaml.safe_load(path.read_text())
+        raise FileNotFoundError(f"Source registry not found at {path}")
+    text = path.read_text()
+    if path.suffix in {".yaml", ".yml"}:
+        data = yaml.safe_load(text) or []
+        if not isinstance(data, list):
+            raise ValueError("YAML sources file must be a list of entries")
+        return data
+    return parse_markdown_sources(text)
 
 
 def load_scoring_config(path: Path) -> dict[str, Any]:
@@ -75,7 +137,7 @@ def main() -> None:
     parser.add_argument("--horizon-days", type=int, default=45)
     parser.add_argument("--include-js", action="store_true", help="Allow Playwright-backed JS scrapers")
     parser.add_argument("--weekly-pass", action="store_true", help="Tag this run as the weekly JS sweep")
-    parser.add_argument("--sources", type=Path, default=Path("src/sources.yaml"))
+    parser.add_argument("--sources", type=Path, default=Path("src/sources.md"))
     parser.add_argument("--scoring-config", type=Path, default=Path("src/scoring_config.json"))
     parser.add_argument("--registry", type=Path, default=Path("src/registry.json"))
     args = parser.parse_args()

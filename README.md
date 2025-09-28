@@ -34,7 +34,7 @@ Outputs are stored in `data/`:
 * `data/out/winners.ics` — import into Apple Calendar and target your Google calendar.
 * `data/out/winners-REMOVE.ics` — rollback file (STATUS:CANCELLED) if you need to retract a run.
 
-Tune `src/sources.yaml` to add/remove feeds and `src/scoring_config.json` to tweak your weighting for career, social, wellbeing,
+Tune `src/sources.md` to add/remove feeds and `src/scoring_config.json` to tweak your weighting for career, social, wellbeing,
 and outdoors priorities.
 
 ## Vision & Objectives
