@@ -78,57 +78,130 @@ class LLMResearchClient:
         horizon_limit = (datetime.now(DEFAULT_TIMEZONE).date() + timedelta(days=horizon_days)).isoformat()
         today = datetime.now(DEFAULT_TIMEZONE).date().isoformat()
 
-        # Load real preferences for goal alignment
+        # Load comprehensive preferences (fallback to defaults on error)
         try:
-            preferences = load_preferences()
-            goal_weights = preferences.get('weights', {}).get('goals', {})
+            pref_path = Path(os.getenv("SPICEFLOW_PREFERENCES_PATH", "src/preferences.yaml"))
+            preferences = load_preferences(pref_path)
+            goal_weights = preferences.get("weights", {}).get("goals", {})
+            travel_bins = preferences.get("travel", {}).get("bins", [])
+            time_windows = preferences.get("time_windows", {})
+            budget_caps = preferences.get("budgets", {})
+            quotas = preferences.get("quotas", {})
+            categories = preferences.get("categories", {})
+            must_see = categories.get("must_see_keywords", [])
         except Exception:
             goal_weights = {}
+            travel_bins = []
+            time_windows = {}
+            budget_caps = {}
+            quotas = {}
+            must_see = []
 
         lines = [
-            "You are a research assistant for Spiceflow Social, finding REAL evening events in Ann Arbor, Michigan.",
+            "You are an expert event curator for Spiceflow Social, analyzing REAL evening events in Ann Arbor, Michigan.",
+            "Extract complete event details for Apple Calendar integration and sophisticated scoring analysis.",
             "",
             "CRITICAL RULES:",
             "- ONLY return events that actually exist on the source website",
             "- NEVER create fake, inferred, or plausible events",
-            "- If no real events found, return empty events array",
-            "- Use web search to find additional event details if needed",
             "- Events must have dates in 2025 (current year)",
+            f"- Events must occur between {today} and {horizon_limit}",
+            "- Focus on evening events (typically 17:00-22:00)",
             "",
-            f"Search the provided source for ACTUAL upcoming events between {today} and {horizon_limit}.",
+            "FOR EACH REAL EVENT, EXTRACT COMPLETE DETAILS:",
             "",
-            "For each REAL event found, extract:",
+            "== ICS CALENDAR FIELDS ==",
             "- title: Exact event name from source",
-            "- start_local: Actual start time in ISO format (America/Detroit timezone)",
-            "- end_local: Actual end time or start + 90 minutes",
-            "- location: Real venue address",
-            "- url: Direct link to event page",
-            "- cost: Actual price or 'Free' if stated",
-            f"- category: {source.get('category', 'general')}",
-            "- tags: Relevant keywords from content",
-            "- fit_rationale: Why this aligns with goals (see goal priorities below)",
+            "- description: Rich 2-3 sentence description for calendar",
+            "- start_local: Precise start time (America/Detroit timezone, ISO format)",
+            "- end_local: Precise end time or estimated duration if not stated",
+            "- location: Full venue name and address (street, city, state, zip if available)",
+            "- url: Direct link to event page or registration",
+            "- organizer: Contact name/email/phone if mentioned",
+            "- cost: Exact price with $ symbol or 'Free'",
+            "- registration_required: true/false for advance registration needed",
+            "- capacity_limited: true/false if limited seating/tickets mentioned",
+            "- accessibility_notes: Any wheelchair/accommodation info mentioned",
+            "",
+            "== SCORING ANALYSIS FIELDS ==",
+            "- intensity_level: 1-5 scale (1=passive viewing, 5=intensive workshop)",
+            "- social_type: 'networking'|'passive'|'interactive'|'presentation'",
+            "- learning_format: 'lecture'|'hands-on'|'discussion'|'performance'|'exhibition'",
+            "- venue_tier: 'tier1'|'tier2'|'tier3'",
+            "- speaker_quality: 'keynote'|'expert'|'local'|'student'|'unknown'",
+            "- follow_up_potential: 1-5 scale",
+            "- seasonal_fit: 'indoor'|'outdoor'|'weather_dependent'",
+            "",
+            "== PREFERENCE ALIGNMENT ==",
+            "Travel Distance Analysis (from Ann Arbor, MI):",
+            json.dumps(travel_bins, indent=2) if travel_bins else "Standard distance analysis",
+            "- travel_minutes: Estimated travel time from downtown Ann Arbor",
+            "- travel_category: 'near'|'local'|'far'|'too_far' based on minutes",
+            "",
+            f"Budget Analysis (weekly cap: ${budget_caps.get('weekly_spend_cap_usd', 150)}):",
+            "- budget_category: 'free'|'low'|'medium'|'high' (low <$25, medium $25-75, high >$75)",
+            "- exceeds_weekly_budget: true/false if over weekly cap",
+            "",
+            "Time Window Preferences:",
+            json.dumps(time_windows, indent=2) if time_windows else "Evening preference analysis",
+            "- time_preference_match: 0.0-1.0 score for optimal time alignment",
+            "",
+            "== DEEP GOAL ANALYSIS ==",
+            f"Goal Weights: {json.dumps(goal_weights, indent=2) if goal_weights else 'Equal weighting'}",
+            "",
+            "CAREER LEARNING (keywords: ai, machine learning, sustainability, climate, energy, entrepreneurship):",
+            "- career_keyword_matches: List specific matched keywords",
+            "- career_alignment_score: 0.0-1.0",
+            "- career_rationale: Why this advances career goals",
+            "",
+            "SOCIAL CONNECTION (keywords: networking, mixer, community, social, reception, meetup):",
+            "- social_keyword_matches: List specific matched keywords",
+            "- social_alignment_score: 0.0-1.0",
+            "- social_rationale: What social opportunities exist",
+            "",
+            "WELLBEING FITNESS (keywords: wellbeing, mental health, fitness, yoga, run):",
+            "- wellbeing_keyword_matches: List specific matched keywords",
+            "- wellbeing_alignment_score: 0.0-1.0",
+            "- wellbeing_rationale: Physical or mental health component",
+            "",
+            "OUTDOORS NATURE (keywords: outdoor, nature, farm, hike, garden):",
+            "- outdoors_keyword_matches: List specific matched keywords",
+            "- outdoors_alignment_score: 0.0-1.0",
+            "- outdoors_rationale: Natural environment component",
+            "",
+            "== MUST-SEE DETECTION ==",
+            f"Must-See Keywords: {must_see}",
+            "- must_see: true only if contains must-see keywords or exceptional speaker/content",
+            "- must_see_rationale: Why this is exceptional (e.g., keynote, rare opportunity)",
+            "",
+            "== CATEGORY QUOTAS ==",
+            f"Weekly Quotas: {json.dumps(quotas.get('weekly', {}), indent=2) if quotas else 'Standard variety'}",
+            "- quota_categories: List which quotas this event helps fulfill",
             "- novelty_score: 0.0-1.0 based on uniqueness",
-            "- travel_minutes: Estimated from Ann Arbor",
-            "- must_see: true only if exceptional/keynote speaker",
-            "- notes: Key details from source",
             "",
-            "GOAL ALIGNMENT PRIORITIES:",
-            json.dumps(goal_weights, indent=2) if goal_weights else "No specific goal weights configured",
-            "",
-            f"Source to research: {source.get('url', 'unknown')}",
-            f"Source name: {source.get('name', 'unknown')}",
-            f"Expected category: {source.get('category', 'general')}",
+            f"SOURCE INFORMATION:",
+            f"- Source URL: {source.get('url', 'unknown')}",
+            f"- Source Name: {source.get('name', 'unknown')}",
+            f"- Expected Category: {source.get('category', 'general')}",
         ]
+
         if context:
-            lines.append("Content excerpt:")
-            lines.append(context[:5000])
+            lines.extend([
+                "",
+                "WEBSITE CONTENT TO ANALYZE:",
+                "=" * 50,
+                context[:8000],
+                "=" * 50,
+            ])
         else:
-            lines.append("Content excerpt: (no page content available)")
+            lines.append("WEBSITE CONTENT: (no page content available)")
 
         lines.extend([
             "",
-            "Return JSON with summary and events array. Empty events array if no real events found.",
-            "STRICT JSON only (no markdown, no prose)."
+            "RESPONSE FORMAT: Return JSON with 'summary' and 'events' array.",
+            "Each event must include ALL fields specified above.",
+            "Empty events array if no real events found in date range.",
+            "STRICT JSON only (no markdown, no prose).",
         ])
         return "\n".join(lines)
 
@@ -154,17 +227,42 @@ class LLMResearchClient:
         if not isinstance(payload, dict):
             raise ValueError("LLM response must be a JSON object")
 
-        # Filter out fake/hallucinated events
+        # Filter out fake/hallucinated or incomplete events
         events = payload.get("events", [])
         validated_events = []
+        hallucination_keywords = [
+            "inferred",
+            "plausible",
+            "suggested",
+            "example",
+            "realistic suggestion",
+            "likely",
+            "probable",
+            "estimated event",
+            "typical",
+            "might",
+            "could be",
+            "potentially",
+            "presumably",
+            "hypothetical",
+        ]
         for event in events:
-            # Skip events with wrong year
-            start_date = event.get("start_local", "")
-            if start_date.startswith("2024") or start_date.startswith("2023"):
+            start_date = str(event.get("start_local", ""))
+            if not start_date.startswith("2025"):
                 continue
-            # Skip events that mention inference/plausible
-            notes = event.get("notes", "").lower()
-            if any(word in notes for word in ["inferred", "plausible", "suggested", "example"]):
+            # Aggregate text fields for hallucination scan
+            text_fields = [
+                str(event.get("notes", "")),
+                str(event.get("description", "")),
+                str(event.get("title", "")),
+                str(event.get("career_rationale", "")),
+                str(event.get("social_rationale", "")),
+            ]
+            all_text = " ".join(text_fields).lower()
+            if any(keyword in all_text for keyword in hallucination_keywords):
+                continue
+            # Require essential ICS fields
+            if not event.get("title") or not event.get("start_local") or not event.get("location"):
                 continue
             validated_events.append(event)
 
@@ -202,7 +300,8 @@ class LLMResearchClient:
                 "maxOutputTokens": max_tokens,
             },
         }
-        # Note: Search grounding not supported in current API
+        # Enable Google Search tool for retrieval grounding (supported in Gemini API)
+        payload["tools"] = [{"googleSearchRetrieval": {}}]
 
         with httpx.Client(timeout=120.0) as client:
             response = client.post(url, params={"key": self._api_key}, json=payload)

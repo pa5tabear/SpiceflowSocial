@@ -162,3 +162,237 @@
     location: "div.event-location"
     notes: "div.entry-content"
     url: "a::attr(href)"
+
+# --- 15 New Sources Added by Gemini (2025-09-28) ---
+
+- name: "Ann Arbor Observer"
+  slug: "ann_arbor_observer"
+  type: "html"
+  url: "https://annarborobserver.com/calendar/"
+  city: "Ann Arbor, MI"
+  category: "Community"
+  venue: "Various"
+  tags: ["community", "various", "ann-arbor"]
+  # NOTE: Selectors are best-effort and may need refinement.
+  html:
+    item: "div.event"
+    title: "h3.event_title"
+    datetime: "span.event_meta_2"
+    location: "span.event_meta_1"
+    notes: "p.event_desc"
+    url: "a::attr(href)"
+
+- name: "The Ark"
+  slug: "the_ark"
+  type: "html"
+  url: "https://theark.org/events/"
+  city: "Ann Arbor, MI"
+  category: "Music"
+  venue: "The Ark"
+  tags: ["music", "folk", "live-music"]
+  # NOTE: Selectors are best-effort and may need refinement.
+  html:
+    item: "div.event-card"
+    title: "h2.event-title"
+    datetime: "div.event-date"
+    location: "div.event-venue-name"
+    notes: "div.event-description"
+    url: "a.event-link::attr(href)"
+
+- name: "Ann Arbor Art Center (A2AC)"
+  slug: "a2ac"
+  type: "html"
+  url: "https://www.annarborartcenter.org/events/"
+  city: "Ann Arbor, MI"
+  category: "Arts"
+  venue: "Ann Arbor Art Center"
+  tags: ["art", "workshop", "gallery"]
+  # NOTE: Selectors are best-effort and may need refinement.
+  html:
+    item: "div.event-item"
+    title: "h3"
+    datetime: "p.event-date"
+    location: "p.event-location"
+    notes: "p.event-excerpt"
+    url: "a::attr(href)"
+
+- name: "Ann Arbor SPARK"
+  slug: "ann_arbor_spark"
+  type: "html"
+  url: "https://annarborusa.org/events/"
+  city: "Ann Arbor, MI"
+  category: "Career"
+  venue: "Various"
+  tags: ["tech", "business", "networking"]
+  # NOTE: Selectors are best-effort and may need refinement.
+  html:
+    item: "div.event"
+    title: "h4.event-title"
+    datetime: "span.date-display-single"
+    location: "div.location"
+    notes: "div.event-body"
+    url: "a::attr(href)"
+
+- name: "Ann Arbor District Library"
+  slug: "aadl"
+  type: "ics"
+  url: "https://aadl.org/events/feed"
+  city: "Ann Arbor, MI"
+  category: "Community"
+  venue: "AADL Branches"
+  tags: ["library", "community", "free"]
+
+- name: "The Blind Pig"
+  slug: "the_blind_pig"
+  type: "html"
+  url: "https://www.blindpigmusic.com/calendar/"
+  city: "Ann Arbor, MI"
+  category: "Music"
+  venue: "The Blind Pig"
+  tags: ["music", "live-music", "concert"]
+  # NOTE: Selectors are best-effort and may need refinement.
+  html:
+    item: "div.list-view-item"
+    title: "h2.headliners"
+    datetime: "h3.dates"
+    location: ""
+    notes: "h2.supports"
+    url: "a.event-link::attr(href)"
+
+- name: "University of Michigan Museum of Art (UMMA)"
+  slug: "umma"
+  type: "ics"
+  url: "https://events.umich.edu/group/19/ical"
+  city: "Ann Arbor, MI"
+  category: "Arts"
+  venue: "UMMA"
+  tags: ["art", "museum", "exhibition"]
+
+- name: "Kerrytown Concert House"
+  slug: "kerrytown_concert_house"
+  type: "html"
+  url: "https://www.kerrytownconcerthouse.com/events/"
+  city: "Ann Arbor, MI"
+  category: "Music"
+  venue: "Kerrytown Concert House"
+  tags: ["music", "jazz", "classical"]
+  # NOTE: Selectors are best-effort and may need refinement.
+  html:
+    item: "div.event-info"
+    title: "h2.event-title"
+    datetime: "div.event-date"
+    location: ""
+    notes: "div.event-excerpt"
+    url: "a.event-link::attr(href)"
+
+- name: "Ann Arbor Comedy Showcase"
+  slug: "aa_comedy_showcase"
+  type: "html"
+  url: "https://www.aacomedy.com/events"
+  city: "Ann Arbor, MI"
+  category: "Comedy"
+  venue: "Ann Arbor Comedy Showcase"
+  tags: ["comedy", "live-show"]
+  # NOTE: Selectors are best-effort and may need refinement.
+  html:
+    item: "div.event-details-wrapper"
+    title: "h3.event-title"
+    datetime: "p.event-date"
+    location: ""
+    notes: "div.event-description"
+    url: "a.event-ticket-link::attr(href)"
+
+- name: "Michigan Theater"
+  slug: "michigan_theater"
+  type: "ics"
+  url: "https://michtheater.org/events/feed"
+  city: "Ann Arbor, MI"
+  category: "Arts"
+  venue: "Michigan Theater"
+  tags: ["film", "concert", "theater"]
+
+- name: "Ann Arbor Farmers Market"
+  slug: "aa_farmers_market"
+  type: "html"
+  url: "https://www.a2gov.org/departments/parks-recreation/market/pages/default.aspx"
+  city: "Ann Arbor, MI"
+  category: "Community"
+  venue: "Ann Arbor Farmers Market"
+  tags: ["food", "community", "outdoors"]
+  # NOTE: Selectors are best-effort and may need refinement.
+  html:
+    item: "div.feature-item"
+    title: "h3"
+    datetime: "p.date"
+    location: ""
+    notes: "p.description"
+    url: "a::attr(href)"
+
+- name: "Fleet Feet Ann Arbor"
+  slug: "fleet_feet_a2"
+  type: "html"
+  url: "https://www.fleetfeet.com/s/annarbor/events"
+  city: "Ann Arbor, MI"
+  category: "Wellbeing"
+  venue: "Various"
+  tags: ["running", "fitness", "community"]
+  # NOTE: Selectors are best-effort and may need refinement.
+  html:
+    item: "div.event-card"
+    title: "h3.card-title"
+    datetime: "p.card-date"
+    location: "p.card-location"
+    notes: "p.card-text"
+    url: "a.card-link::attr(href)"
+
+- name: "Google Developer Group Ann Arbor"
+  slug: "gdg_ann_arbor"
+  type: "html"
+  url: "https://www.meetup.com/gdg-ann-arbor/events/"
+  city: "Ann Arbor, MI"
+  category: "Career"
+  venue: "Various"
+  tags: ["tech", "google", "developer"]
+  # NOTE: Selectors are best-effort and may need refinement.
+  html:
+    item: "div.event-card"
+    title: "h3"
+    datetime: "time"
+    location: "div.venue-name"
+    notes: "div.description"
+    url: "a.event-card-link::attr(href)"
+
+- name: "Zingerman's Deli Events"
+  slug: "zingermans_events"
+  type: "html"
+  url: "https://www.zingermansdeli.com/events/"
+  city: "Ann Arbor, MI"
+  category: "Food"
+  venue: "Zingerman's Delicatessen"
+  tags: ["food", "tasting", "workshop"]
+  # NOTE: Selectors are best-effort and may need refinement.
+  html:
+    item: "div.event-listing"
+    title: "h2.event-title"
+    datetime: "span.event-date"
+    location: "span.event-location"
+    notes: "div.event-description"
+    url: "a.event-link::attr(href)"
+
+- name: "Literati Bookstore Events"
+  slug: "literati_events"
+  type: "html"
+  url: "https://www.literatibookstore.com/events"
+  city: "Ann Arbor, MI"
+  category: "Arts"
+  venue: "Literati Bookstore"
+  tags: ["books", "author", "reading"]
+  # NOTE: Selectors are best-effort and may need refinement.
+  html:
+    item: "div.event-item"
+    title: "h2.event-title"
+    datetime: "p.event-date"
+    location: ""
+    notes: "div.event-description"
+    url: "a.event-link::attr(href)"
+

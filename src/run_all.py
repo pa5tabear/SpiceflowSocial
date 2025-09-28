@@ -14,6 +14,8 @@ from emit.ics_writer import write_ics
 from emit.reports import write_run_report
 from emit.research_report import write_research_summary
 from emit.daily_markdown import write_daily_markdowns, write_changes_summary
+from emit.weekly_review import write_weekly_review
+from emit.source_performance_report import write_source_performance_report
 from plan.choose import choose_portfolio, write_portfolio
 from plan.score import attach_scores
 from preferences import load_preferences, target_calendar_name
@@ -88,6 +90,8 @@ def main() -> None:
     parser.add_argument("--weekly-pass", action="store_true", help="Tag this run as the weekly JS sweep")
     parser.add_argument("--use-llm-research", action="store_true", help="Use LLM research instead of direct scraping")
     parser.add_argument("--llm-overwrite", action="store_true", help="Overwrite LLM snapshots instead of timestamped files")
+    parser.add_argument("--rolling-update", action="store_true", help="Daily rolling update mode (preserve approvals, append new day)")
+    parser.add_argument("--full-refresh", action="store_true", help="Full 7-day refresh mode (regenerate all selections)")
     parser.add_argument("--sources", type=Path, default=Path("src/sources.yaml"))
     parser.add_argument("--scoring-config", type=Path, default=Path("src/scoring_config.json"))
     parser.add_argument("--preferences", type=Path, default=Path("src/preferences.yaml"))
@@ -114,6 +118,7 @@ def main() -> None:
     skipped_sources: list[str] = []
     research_summaries: list[dict[str, Any]] = []
     research_entries: list[dict[str, Any]] = []
+    counts_by_slug: dict[str, int] = {}
 
     source_lookup = {source.get("slug"): source for source in sources if source.get("slug")}
 
@@ -129,6 +134,8 @@ def main() -> None:
         for item in llm_events:
             all_events.append(item)
             events_by_slug[item.get("source", "unknown")].append(item)
+        for slug, items in events_by_slug.items():
+            counts_by_slug[slug] = len(items)
         for result in results:
             slug = result.slug or "source"
             research_entries.append({"slug": slug, "summary": result.summary, "notes": result.notes})
@@ -155,6 +162,7 @@ def main() -> None:
             if events:
                 write_ics(events, source_ics, calendar_name=source.get("name", slug))
                 all_events.extend(events)
+                counts_by_slug[slug] = len(events)
             else:
                 skipped_sources.append(slug)
 
@@ -188,6 +196,33 @@ def main() -> None:
     )
     write_changes_summary(Path("data/out/suggested_changes.md"), daily_info)
 
+    # Weekly review (preserve approvals if rolling update)
+    previous_selected = None
+    archive_dir = Path("data/out/portfolios")
+    archive_dir.mkdir(parents=True, exist_ok=True)
+    latest_prev = None
+    prev_files = sorted(archive_dir.glob("portfolio-*.json"))
+    if prev_files:
+        latest_prev = prev_files[-1]
+    if latest_prev and args.rolling_update:
+        try:
+            previous_selected = json.loads(latest_prev.read_text()).get("selected", [])
+        except Exception:
+            previous_selected = None
+    write_weekly_review(
+        portfolio["selected"],
+        portfolio,
+        availability_summary,
+        Path("data/out/weekly_review.md"),
+        previous_selected=previous_selected,
+    )
+    # Archive current portfolio
+    archive_path = archive_dir / f"portfolio-{run_date}.json"
+    try:
+        archive_path.write_text(json.dumps(portfolio, ensure_ascii=False, indent=2))
+    except Exception:
+        pass
+
     run_report_path = batch_dir / "run_report.md"
     write_run_report(
         run_report_path,
@@ -198,6 +233,23 @@ def main() -> None:
         research_summaries=research_summaries,
         availability_summary=availability_summary if availability_summary else None,
     )
+
+    # Simple source performance report
+    write_source_performance_report(counts_by_slug, skipped_sources, Path("data/out/source_performance_report.md"))
+
+    # Run summary JSON for automation/scripts
+    run_summary = {
+        "date": run_date,
+        "num_sources": len(sources),
+        "num_unique_events": len(unique_events),
+        "num_selected": len(portfolio["selected"]),
+        "num_duplicates": len(duplicates),
+        "skipped_sources": skipped_sources,
+    }
+    try:
+        Path("data/out/run_summary.json").write_text(json.dumps(run_summary, ensure_ascii=False, indent=2))
+    except Exception:
+        pass
 
     print(f"Run complete: {len(unique_events)} events, {len(portfolio['selected'])} selected")
 

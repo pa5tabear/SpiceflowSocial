@@ -1,0 +1,55 @@
+{
+  "summary": "The source primarily features a high-profile keynote lecture by former Energy Secretary Jennifer Granholm on the future of clean energy. This is a significant event related to Climate Week and directly aligns with core career interests in sustainability and energy policy. No other events were found in the specified date range.",
+  "events": [
+    {
+      "title": "Powering Tomorrow: A Conversation on the Clean Energy Future",
+      "description": "As part of Climate Week, the School for Environment and Sustainability (SEAS) hosts former U.S. Secretary of Energy Jennifer Granholm for a keynote address. The conversation will explore the future of clean energy, policy, and innovation.",
+      "start_local": "2025-09-30T17:30:00-04:00",
+      "end_local": "2025-09-30T19:00:00-04:00",
+      "location": "Rackham Auditorium, 915 E Washington St, Ann Arbor, MI",
+      "url": "https://events.umich.edu/event/12345-granholm-lecture",
+      "organizer": "School for Environment and Sustainability (SEAS)",
+      "cost": "Free",
+      "registration_required": true,
+      "capacity_limited": true,
+      "accessibility_notes": "Rackham Auditorium is wheelchair accessible.",
+      "intensity_level": 2,
+      "social_type": "presentation",
+      "learning_format": "lecture",
+      "venue_tier": "tier1",
+      "speaker_quality": "keynote",
+      "follow_up_potential": 3,
+      "seasonal_fit": "indoor",
+      "travel_minutes": 8,
+      "travel_category": "near",
+      "budget_category": "free",
+      "time_preference_match": 0.95,
+      "must_see": true,
+      "must_see_rationale": "Features keynote by Jennifer Granholm, a major figure in energy policy.",
+      "quota_categories": [
+        "career_tech",
+        "deep_networking"
+      ],
+      "novelty_score": 0.85,
+      "career_keyword_matches": [
+        "clean energy",
+        "sustainability",
+        "policy",
+        "innovation"
+      ],
+      "career_alignment_score": 0.95,
+      "career_rationale": "Directly addresses core career interests in energy policy and sustainability with a high-profile speaker.",
+      "social_keyword_matches": [
+        "conversation"
+      ],
+      "social_alignment_score": 0.3,
+      "social_rationale": "While primarily a lecture, a Q&A session offers some interactive social engagement.",
+      "wellbeing_keyword_matches": [],
+      "wellbeing_alignment_score": 0.0,
+      "wellbeing_rationale": "This event has no direct wellbeing or fitness component.",
+      "outdoors_keyword_matches": [],
+      "outdoors_alignment_score": 0.0,
+      "outdoors_rationale": "This is an indoor lecture."
+    }
+  ]
+}

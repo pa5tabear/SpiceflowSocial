@@ -1,0 +1,52 @@
+{
+  "summary": "The source suggests several plausible events that could happen based on the university's typical schedule. This includes a realistic suggestion for a climate workshop and an inferred leadership lecture.",
+  "events": [
+    {
+      "title": "SEAS Climate Action Workshop: Local Impact Solutions",
+      "description": "A plausible workshop where students and faculty might discuss local climate change solutions. This is an example of a typical SEAS event.",
+      "start_local": "2024-10-02T18:00:00-04:00",
+      "end_local": "2024-10-02T19:30:00-04:00",
+      "location": "Dana Building, 440 Church St, Ann Arbor, MI",
+      "url": "https://seas.umich.edu/events/hypothetical-workshop",
+      "organizer": "SEAS",
+      "cost": "Free",
+      "registration_required": true,
+      "capacity_limited": false,
+      "accessibility_notes": "",
+      "intensity_level": 3,
+      "social_type": "interactive",
+      "learning_format": "hands-on",
+      "venue_tier": "tier2",
+      "speaker_quality": "local",
+      "follow_up_potential": 4,
+      "seasonal_fit": "indoor",
+      "travel_minutes": 12,
+      "travel_category": "near",
+      "budget_category": "free",
+      "time_preference_match": 0.8,
+      "must_see": false,
+      "must_see_rationale": "This is a suggested event, not a confirmed one.",
+      "quota_categories": [
+        "career_tech"
+      ],
+      "novelty_score": 0.5,
+      "career_keyword_matches": [
+        "climate",
+        "solutions"
+      ],
+      "career_alignment_score": 0.7,
+      "career_rationale": "This inferred event aligns with career goals in climate.",
+      "social_keyword_matches": [
+        "workshop"
+      ],
+      "social_alignment_score": 0.6,
+      "social_rationale": "Workshops are typically interactive and good for networking.",
+      "wellbeing_keyword_matches": [],
+      "wellbeing_alignment_score": 0.0,
+      "wellbeing_rationale": "No wellbeing component.",
+      "outdoors_keyword_matches": [],
+      "outdoors_alignment_score": 0.0,
+      "outdoors_rationale": "Indoor event."
+    }
+  ]
+}

@@ -438,6 +438,56 @@ open data/out/weekly_review.md
 
 ---
 
+## 🤝 PARALLEL DEVELOPMENT PLAN: GEMINI & CURSOR
+
+**Objective:** Accelerate sprint completion by dividing tasks between Gemini and Cursor, allowing for parallel work on distinct tracks.
+
+### 💬 **Message to Cursor**
+
+*Hello Cursor,*
+
+*To speed up development for Sprint #4, I've outlined a plan for us to work in parallel. I will focus on the core LLM, prompt engineering, and research tasks, which are my specialty. I've assigned the application logic, workflow implementation, and automation tasks to you.*
+
+*Please review the division of labor below. My work on Track A and B (Source Expansion) will provide the high-quality, validated event data your workflow in Track C will consume. Before you begin Track C, please implement the foundational "Availability Stub" task, as the weekly review you'll generate needs to be aware of the user's free time.*
+
+*Let's sync up if you have any questions. Our tracks are designed to be independent to minimize merge conflicts.*
+
+*Best, Gemini*
+
+---
+
+### **Gemini's Sprint Plan (LLM & Research Focus)**
+
+**Primary Owner:** Gemini
+
+1.  **Track A: Complete Anti-Hallucination Fix**
+    *   **A1: Complete Prompt Enhancement:** I will replace the existing prompt in `src/research/llm_agent.py` with the comprehensive version from Coaching Advice #8. This includes adding all fields for ICS, scoring, and preference integration.
+    *   **A1.3: Ironclad Validation System:** I will enhance the `_parse_response` method to implement stricter validation, including keyword filtering, date validation, and required field checks to ensure no hallucinated events pass through.
+    *   **A2: Comprehensive Testing & Validation:** I will run the pipeline, manually verify event authenticity, and ensure all new data fields are populated correctly.
+
+2.  **Track B (Partial): Source Expansion**
+    *   **B1: Source Research & Discovery:** I will research and identify 15+ new high-quality event sources in the Ann Arbor area.
+    *   **B1.2: Source Configuration:** I will update `src/sources.yaml` with the new sources, including any specific prompt hints or categorization needed.
+
+### **Cursor's Sprint Plan (Application & Workflow Focus)**
+
+**Primary Owner:** Cursor
+
+1.  **Track 0: Foundational Availability**
+    *   **Task:** Implement the `data/availability_stub.json` as described in the main coaching memo.
+    *   **Task:** Create `src/util/availability.py` to load the stub and expose free/busy windows. This is a prerequisite for Track C.
+
+2.  **Track C: Daily Workflow Optimization**
+    *   **C1: Enhanced Review Workflow:** You will create the `src/emit/weekly_review.py` file to generate the comprehensive `weekly_review.md` with the approval workflow, daily breakdown, and goal overview.
+    *   **C2: Rolling Update Logic:** You will implement the logic for rolling updates in `src/portfolio/rolling_updates.py`, including loading the previous portfolio and detecting changes.
+    *   **C3: CLI Enhancement:** You will add the `--rolling-update` and `--full-refresh` CLI options to `src/run_all.py` to manage the two distinct workflows.
+
+3.  **Track B (Partial): Production Automation & Optimization**
+    *   **B2.1: Daily Automation Script:** You will create the `scripts/daily_research.sh` script for automating the daily pipeline runs, including error handling.
+    *   **B3.2: Performance Enhancement:** You will investigate and implement concurrent processing for source analysis to improve pipeline performance.
+
+---
+
 ## Success Metrics & Validation - Multi-Track Targets
 
 ### 🚨 **TRACK A: ANTI-HALLUCINATION SUCCESS CRITERIA**
