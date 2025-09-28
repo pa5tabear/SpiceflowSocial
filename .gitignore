@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Pipeline outputs (keep directory sentinels)
+data/cache/*
+!data/cache/.gitkeep
+data/events_batches/*
+!data/events_batches/.gitkeep
+data/merged/*
+!data/merged/.gitkeep
+data/out/*
+!data/out/.gitkeep

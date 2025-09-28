@@ -6,6 +6,8 @@ This master plan outlines the desired capabilities, data inputs, decision logic,
 
 ## Zero-API pipeline (2025 refresh)
 
+The previous scaffold-only prototype now lives in `archive/zero-api-scaffold/` for reference. Use the modules under `src/` for the active pipeline.
+
 The repository now includes an end-to-end, zero-OAuth workflow that gathers public events, scores them against your goals, and
 produces an `ICS` you can import into Apple Calendar (which syncs upstream to Google). The components live under `src/`:
 
