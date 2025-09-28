@@ -38,7 +38,9 @@ def fetch(url: str, *, timeout: float = 30.0, force_refresh: bool = False) -> Ca
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     index = _load_index()
     entry = index.get(url)
-    headers = {}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
     if entry and not force_refresh:
         if etag := entry.get("etag"):
             headers["If-None-Match"] = etag

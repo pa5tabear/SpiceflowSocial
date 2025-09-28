@@ -9,7 +9,7 @@ icalendar = pytest.importorskip('icalendar')
 
 from availability import load_calendar_events, summarise_evenings
 
-ICS_SAMPLE = """BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:20251001T223000Z\nDTEND:20251001T233000Z\nSUMMARY:Late Meeting\nEND:VEVENT\nEND:VCALENDAR"""
+ICS_SAMPLE = """BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:20250929T223000Z\nDTEND:20250929T233000Z\nSUMMARY:Late Meeting\nEND:VEVENT\nEND:VCALENDAR"""
 
 
 def test_load_calendar_events(tmp_path: Path) -> None:

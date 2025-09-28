@@ -8,13 +8,22 @@ from typing import Iterable
 from icalendar import Calendar, Event
 
 from util.timez import DEFAULT_TIMEZONE, ensure_timezone
+from util.uid import generate_uid
 
 
 def _event_component(event: dict, *, cancelled: bool = False) -> Event:
     component = Event()
-    component.add("uid", event["uid"])
+    uid = event.get("uid") or generate_uid(
+        event.get("title"),
+        event.get("start_local"),
+        event.get("url") or event.get("location"),
+    )
+    component.add("uid", uid)
     component.add("summary", event.get("title", "Untitled Event"))
-    start = ensure_timezone(datetime.fromisoformat(event["start_local"]))
+    start_value = event.get("start_local")
+    if not start_value:
+        raise ValueError("Event missing required start_local for ICS export")
+    start = ensure_timezone(datetime.fromisoformat(start_value))
     component.add("dtstart", start)
     end_value = event.get("end_local")
     if end_value:

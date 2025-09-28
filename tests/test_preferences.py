@@ -50,7 +50,7 @@ def test_must_see_keywords_returns_list() -> None:
 
 def test_target_calendar_name_defaults():
     prefs = {}
-    assert target_calendar_name(prefs) == "Spiceflow Social (AI)"
+    assert target_calendar_name(prefs) == "Ann Arbor Events & Activities"
 
 
 def test_target_calendar_name_from_preferences():

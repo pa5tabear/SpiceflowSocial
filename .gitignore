@@ -11,6 +11,8 @@ data/merged/*
 !data/merged/.gitkeep
 data/out/*
 !data/out/.gitkeep
+data/secrets/*
+!data/secrets/.gitkeep
 data/research/*
 !data/research/.gitkeep
 

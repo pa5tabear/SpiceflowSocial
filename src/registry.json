@@ -1,1 +1,164 @@
-{}
+{
+  "134962-21876088@events.umich.edu": {
+    "first_seen": "2025-10-03T13:00"
+  },
+  "134962-21876089@events.umich.edu": {
+    "first_seen": "2025-10-10T13:00"
+  },
+  "134962-21876118@events.umich.edu": {
+    "first_seen": "2025-10-03T15:00"
+  },
+  "134962-21876119@events.umich.edu": {
+    "first_seen": "2025-10-10T15:00"
+  },
+  "134962-21876149@events.umich.edu": {
+    "first_seen": "2025-10-04T13:00"
+  },
+  "134962-21876150@events.umich.edu": {
+    "first_seen": "2025-10-11T13:00"
+  },
+  "134962-21876179@events.umich.edu": {
+    "first_seen": "2025-10-04T15:00"
+  },
+  "134962-21876180@events.umich.edu": {
+    "first_seen": "2025-10-11T15:00"
+  },
+  "135100-21876224@events.umich.edu": {
+    "first_seen": "2025-10-05T15:00"
+  },
+  "135100-21876225@events.umich.edu": {
+    "first_seen": "2025-10-12T15:00"
+  },
+  "135177-21876457@events.umich.edu": {
+    "first_seen": "2025-10-09T11:00"
+  },
+  "136098-21877847@events.umich.edu": {
+    "first_seen": "2025-10-08T16:00"
+  },
+  "137100-21879544@events.umich.edu": {
+    "first_seen": "2025-10-01T09:00"
+  },
+  "137431-21880234@events.umich.edu": {
+    "first_seen": "2025-10-07T16:30"
+  },
+  "137488-21880336@events.umich.edu": {
+    "first_seen": "2025-10-11T08:00"
+  },
+  "137884-21881042@events.umich.edu": {
+    "first_seen": "2025-09-28T12:00"
+  },
+  "137884-21881044@events.umich.edu": {
+    "first_seen": "2025-09-30T12:00"
+  },
+  "137884-21881045@events.umich.edu": {
+    "first_seen": "2025-10-01T12:00"
+  },
+  "137884-21881046@events.umich.edu": {
+    "first_seen": "2025-10-02T12:00"
+  },
+  "137884-21881047@events.umich.edu": {
+    "first_seen": "2025-10-03T12:00"
+  },
+  "137884-21881049@events.umich.edu": {
+    "first_seen": "2025-10-05T12:00"
+  },
+  "138234-21882659@events.umich.edu": {
+    "first_seen": "2025-10-04T10:30"
+  },
+  "138552-21883200@events.umich.edu": {
+    "first_seen": "2025-10-05T11:00"
+  },
+  "138553-21883201@events.umich.edu": {
+    "first_seen": "2025-10-09T17:30"
+  },
+  "138611-21883444@events.umich.edu": {
+    "first_seen": "2025-10-03T18:00"
+  },
+  "138611-21883445@events.umich.edu": {
+    "first_seen": "2025-10-10T18:00"
+  },
+  "138611-21883453@events.umich.edu": {
+    "first_seen": "2025-10-03T19:00"
+  },
+  "138611-21883454@events.umich.edu": {
+    "first_seen": "2025-10-10T19:00"
+  },
+  "138611-21883461@events.umich.edu": {
+    "first_seen": "2025-10-03T17:00"
+  },
+  "138611-21883462@events.umich.edu": {
+    "first_seen": "2025-10-10T17:00"
+  },
+  "138611-21883469@events.umich.edu": {
+    "first_seen": "2025-10-04T17:00"
+  },
+  "138611-21883470@events.umich.edu": {
+    "first_seen": "2025-10-11T17:00"
+  },
+  "138611-21883477@events.umich.edu": {
+    "first_seen": "2025-10-04T18:00"
+  },
+  "138611-21883478@events.umich.edu": {
+    "first_seen": "2025-10-11T18:00"
+  },
+  "138611-21883485@events.umich.edu": {
+    "first_seen": "2025-10-04T19:00"
+  },
+  "138611-21883486@events.umich.edu": {
+    "first_seen": "2025-10-11T19:00"
+  },
+  "138671-21883564@events.umich.edu": {
+    "first_seen": "2025-10-07T16:00"
+  },
+  "138885-21884188@events.umich.edu": {
+    "first_seen": "2025-09-29T12:00"
+  },
+  "138997-21884500@events.umich.edu": {
+    "first_seen": "2025-10-01T12:00"
+  },
+  "138998-21884502@events.umich.edu": {
+    "first_seen": "2025-10-08T12:00"
+  },
+  "139071-21884818@events.umich.edu": {
+    "first_seen": "2025-10-01T15:00"
+  },
+  "139241-21885181@events.umich.edu": {
+    "first_seen": "2025-10-07T09:00"
+  },
+  "139589-21885757@events.umich.edu": {
+    "first_seen": "2025-10-09T09:00"
+  },
+  "139712-21885938@events.umich.edu": {
+    "first_seen": "2025-10-06T09:00"
+  },
+  "139745-21885994@events.umich.edu": {
+    "first_seen": "2025-10-02T15:30"
+  },
+  "139751-21886006@events.umich.edu": {
+    "first_seen": "2025-10-02T12:00"
+  },
+  "139751-21886007@events.umich.edu": {
+    "first_seen": "2025-10-02T16:30"
+  },
+  "139804-21886070@events.umich.edu": {
+    "first_seen": "2025-09-30T16:00"
+  },
+  "139812-21886090@events.umich.edu": {
+    "first_seen": "2025-09-29T15:00"
+  },
+  "139973-21886443@events.umich.edu": {
+    "first_seen": "2025-09-28T12:00"
+  },
+  "73ce0ec642972802453d08d04de57003": {
+    "first_seen": "2025-09-30T17:30-04:00"
+  },
+  "7c2a3279e5e93a2939f33511f5b99831": {
+    "first_seen": "2025-10-03T18:00-04:00"
+  },
+  "c526fcd1b5f3bc375641d570b678fb81": {
+    "first_seen": "2025-09-30T16:00-04:00"
+  },
+  "eede6ffa6f4977f3a01d9d42476071d4": {
+    "first_seen": "2025-10-03T17:00-04:00"
+  }
+}

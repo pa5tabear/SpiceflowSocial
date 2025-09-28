@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import defaultdict
 import json
 from datetime import datetime
 from pathlib import Path
@@ -12,6 +13,7 @@ import yaml
 from emit.ics_writer import write_ics
 from emit.reports import write_run_report
 from emit.research_report import write_research_summary
+from emit.daily_markdown import write_daily_markdowns, write_changes_summary
 from plan.choose import choose_portfolio, write_portfolio
 from plan.score import attach_scores
 from preferences import load_preferences, target_calendar_name
@@ -123,19 +125,21 @@ def main() -> None:
             output_dir=research_dir,
             overwrite=args.llm_overwrite,
         )
-        all_events.extend(llm_events)
+        events_by_slug: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        for item in llm_events:
+            all_events.append(item)
+            events_by_slug[item.get("source", "unknown")].append(item)
         for result in results:
             slug = result.slug or "source"
             research_entries.append({"slug": slug, "summary": result.summary, "notes": result.notes})
             research_summaries.append({"slug": slug, "summary": result.summary})
-            events = [dict(event, source=slug) for event in result.events]
+            events = events_by_slug.get(slug, [])
             source_jsonl = batch_dir / f"{slug}.jsonl"
             source_ics = batch_dir / f"{slug}.ics"
             write_jsonl(source_jsonl, events)
             if events:
                 calendar_name = source_lookup.get(slug, {}).get("name", slug)
                 write_ics(events, source_ics, calendar_name=calendar_name)
-                all_events.extend(events)
             else:
                 skipped_sources.append(slug)
     else:
@@ -175,6 +179,14 @@ def main() -> None:
     write_ics(portfolio["selected"], winners_ics, calendar_name=target_calendar)
     winners_remove = Path("data/out/winners-REMOVE.ics")
     write_ics(portfolio["selected"], winners_remove, calendar_name=f"{target_calendar} (Rollback)", cancelled=True)
+
+    daily_info = write_daily_markdowns(
+        portfolio["selected"],
+        availability_summary,
+        horizon_days=min(args.horizon_days, 7),
+        output_dir=Path("data/out/daily"),
+    )
+    write_changes_summary(Path("data/out/suggested_changes.md"), daily_info)
 
     run_report_path = batch_dir / "run_report.md"
     write_run_report(
