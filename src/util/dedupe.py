@@ -36,8 +36,29 @@ def dedupe_events(events: Iterable[dict], registry_path: Path) -> Tuple[list[dic
             continue
         unique[uid] = event
         registry[uid] = {"first_seen": event.get("start_local")}
+    unique_events = list(unique.values())
+
+    # Collapse near-duplicates that share title/date/location even if the UID differs
+    by_similarity: dict[str, dict] = {}
+    same_day_duplicates: list[dict] = []
+    for event in sorted(unique_events, key=lambda e: e.get("start_local") or ""):
+        key = make_similarity_key(event)
+        if key not in by_similarity:
+            by_similarity[key] = event
+            continue
+        existing = by_similarity[key]
+        existing_start = existing.get("start_local") or ""
+        candidate_start = event.get("start_local") or ""
+        if candidate_start and (not existing_start or candidate_start < existing_start):
+            same_day_duplicates.append(existing)
+            by_similarity[key] = event
+        else:
+            same_day_duplicates.append(event)
+
+    deduped_events = list(by_similarity.values())
+    duplicates.extend(same_day_duplicates)
     save_registry(registry_path, registry)
-    return list(unique.values()), duplicates
+    return deduped_events, duplicates
 
 
 def make_similarity_key(event: dict) -> str:

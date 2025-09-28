@@ -11,6 +11,7 @@ import yaml
 
 from emit.ics_writer import write_ics
 from emit.reports import write_run_report
+from emit.research_report import write_research_summary
 from plan.choose import choose_portfolio, write_portfolio
 from plan.score import attach_scores
 from preferences import load_preferences, target_calendar_name
@@ -110,6 +111,7 @@ def main() -> None:
     all_events: list[dict[str, Any]] = []
     skipped_sources: list[str] = []
     research_summaries: list[dict[str, Any]] = []
+    research_entries: list[dict[str, Any]] = []
 
     source_lookup = {source.get("slug"): source for source in sources if source.get("slug")}
 
@@ -124,6 +126,7 @@ def main() -> None:
         all_events.extend(llm_events)
         for result in results:
             slug = result.slug or "source"
+            research_entries.append({"slug": slug, "summary": result.summary, "notes": result.notes})
             research_summaries.append({"slug": slug, "summary": result.summary})
             events = [dict(event, source=slug) for event in result.events]
             source_jsonl = batch_dir / f"{slug}.jsonl"
@@ -132,6 +135,7 @@ def main() -> None:
             if events:
                 calendar_name = source_lookup.get(slug, {}).get("name", slug)
                 write_ics(events, source_ics, calendar_name=calendar_name)
+                all_events.extend(events)
             else:
                 skipped_sources.append(slug)
     else:
@@ -152,6 +156,9 @@ def main() -> None:
 
     unique_events, duplicates = dedupe_events(all_events, args.registry)
     attach_scores(unique_events, scoring_config, preferences)
+
+    if research_entries:
+        write_research_summary(Path("data/out/research_summary.md"), research_entries)
 
     merged_jsonl = Path("data/merged/all_events.jsonl")
     merged_ics = Path("data/merged/all_events.ics")
