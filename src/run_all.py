@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Iterable
@@ -14,11 +13,12 @@ from emit.ics_writer import write_ics
 from emit.reports import write_run_report
 from plan.choose import choose_portfolio, write_portfolio
 from plan.score import attach_scores
+from preferences import load_preferences
+from research import gather_llm_research
 from util.dedupe import dedupe_events
 from util.timez import DEFAULT_TIMEZONE
 
 from scrape import html_pull, ics_pull, jsonld_pull, js_pull
-
 
 SCRAPER_ORDER = ["ics", "jsonld", "html", "js"]
 SCRAPERS = {
@@ -28,72 +28,16 @@ SCRAPERS = {
     "js": js_pull.pull,
 }
 
-SOURCE_LINE_RE = re.compile(r"^\s*-\s*\[(?P<name>.+?)\]\((?P<url>[^)]+)\)\s*(?:\|\s*(?P<meta>.*))?$")
-
-
-def _assign_nested(target: dict[str, Any], dotted_key: str, value: Any) -> None:
-    parts = dotted_key.split(".")
-    current = target
-    for part in parts[:-1]:
-        current = current.setdefault(part, {})
-    current[parts[-1]] = value
-
-
-def parse_markdown_sources(text: str) -> list[dict[str, Any]]:
-    sources: list[dict[str, Any]] = []
-    in_code_block = False
-    for index, raw_line in enumerate(text.splitlines(), start=1):
-        stripped = raw_line.strip()
-        if stripped.startswith("```"):
-            in_code_block = not in_code_block
-            continue
-        if in_code_block or not stripped or stripped.startswith("#"):
-            continue
-        if not stripped.startswith("-[") and not stripped.startswith("- ["):
-            continue
-        match = SOURCE_LINE_RE.match(stripped)
-        if not match:
-            raise ValueError(f"Invalid source definition on line {index}: {raw_line.strip()}")
-        entry: dict[str, Any] = {
-            "name": match.group("name").strip(),
-            "url": match.group("url").strip(),
-        }
-        meta_block = match.group("meta") or ""
-        meta: dict[str, Any] = {}
-        if meta_block:
-            for chunk in meta_block.split("|"):
-                chunk = chunk.strip()
-                if not chunk:
-                    continue
-                if "=" not in chunk:
-                    raise ValueError(f"Missing '=' in metadata chunk '{chunk}' on line {index}")
-                key, value = chunk.split("=", 1)
-                value = value.strip()
-                parsed_value = yaml.safe_load(value) if value else None
-                _assign_nested(meta, key.strip(), parsed_value)
-        entry.update(meta)
-        if "type" not in entry and "kind" in entry:
-            entry["type"] = entry.pop("kind")
-        if "type" not in entry and "parser" in entry:
-            entry["type"] = entry.pop("parser")
-        if "slug" not in entry:
-            raise ValueError(f"Missing 'slug' for source on line {index}")
-        if "type" not in entry:
-            raise ValueError(f"Missing 'type' for source '{entry['slug']}' on line {index}")
-        sources.append(entry)
-    return sources
-
 
 def load_sources(path: Path) -> list[dict[str, Any]]:
     if not path.exists():
         raise FileNotFoundError(f"Source registry not found at {path}")
-    text = path.read_text()
-    if path.suffix in {".yaml", ".yml"}:
-        data = yaml.safe_load(text) or []
-        if not isinstance(data, list):
-            raise ValueError("YAML sources file must be a list of entries")
-        return data
-    return parse_markdown_sources(text)
+    if path.suffix not in {".yaml", ".yml"}:
+        raise ValueError("`sources.yaml` must be a YAML list of source entries")
+    data = yaml.safe_load(path.read_text()) or []
+    if not isinstance(data, list):
+        raise ValueError("YAML sources file must be a list of entries")
+    return data
 
 
 def load_scoring_config(path: Path) -> dict[str, Any]:
@@ -137,13 +81,17 @@ def main() -> None:
     parser.add_argument("--horizon-days", type=int, default=45)
     parser.add_argument("--include-js", action="store_true", help="Allow Playwright-backed JS scrapers")
     parser.add_argument("--weekly-pass", action="store_true", help="Tag this run as the weekly JS sweep")
+    parser.add_argument("--use-llm-research", action="store_true", help="Use LLM research instead of direct scraping")
+    parser.add_argument("--llm-overwrite", action="store_true", help="Overwrite LLM snapshots instead of timestamped files")
     parser.add_argument("--sources", type=Path, default=Path("src/sources.yaml"))
     parser.add_argument("--scoring-config", type=Path, default=Path("src/scoring_config.json"))
+    parser.add_argument("--preferences", type=Path, default=Path("src/preferences.yaml"))
     parser.add_argument("--registry", type=Path, default=Path("src/registry.json"))
     args = parser.parse_args()
 
     sources = load_sources(args.sources)
     scoring_config = load_scoring_config(args.scoring_config)
+    preferences = load_preferences(args.preferences)
 
     run_date = datetime.now(DEFAULT_TIMEZONE).date().isoformat()
     batch_dir = Path("data/events_batches") / f"batch_{run_date}"
@@ -151,31 +99,56 @@ def main() -> None:
 
     all_events: list[dict[str, Any]] = []
     skipped_sources: list[str] = []
+    research_summaries: list[dict[str, Any]] = []
 
-    for source in sources:
-        if source.get("type") == "js" and not args.include_js:
-            skipped_sources.append(source.get("slug", "unknown"))
-            continue
-        events, _ = process_source(source, horizon_days=args.horizon_days, include_js=args.include_js)
-        slug = source.get("slug", "source")
-        source_jsonl = batch_dir / f"{slug}.jsonl"
-        source_ics = batch_dir / f"{slug}.ics"
-        write_jsonl(source_jsonl, events)
-        if events:
-            write_ics(events, source_ics, calendar_name=source.get("name", slug))
-            all_events.extend(events)
-        else:
-            skipped_sources.append(slug)
+    source_lookup = {source.get("slug"): source for source in sources if source.get("slug")}
+
+    if args.use_llm_research:
+        research_dir = Path("data/research")
+        llm_events, results = gather_llm_research(
+            sources,
+            horizon_days=args.horizon_days,
+            output_dir=research_dir,
+            overwrite=args.llm_overwrite,
+        )
+        all_events.extend(llm_events)
+        for result in results:
+            slug = result.slug or "source"
+            research_summaries.append({"slug": slug, "summary": result.summary})
+            events = [dict(event, source=slug) for event in result.events]
+            source_jsonl = batch_dir / f"{slug}.jsonl"
+            source_ics = batch_dir / f"{slug}.ics"
+            write_jsonl(source_jsonl, events)
+            if events:
+                calendar_name = source_lookup.get(slug, {}).get("name", slug)
+                write_ics(events, source_ics, calendar_name=calendar_name)
+            else:
+                skipped_sources.append(slug)
+    else:
+        for source in sources:
+            if source.get("type") == "js" and not args.include_js:
+                skipped_sources.append(source.get("slug", "unknown"))
+                continue
+            events, _ = process_source(source, horizon_days=args.horizon_days, include_js=args.include_js)
+            slug = source.get("slug", "source")
+            source_jsonl = batch_dir / f"{slug}.jsonl"
+            source_ics = batch_dir / f"{slug}.ics"
+            write_jsonl(source_jsonl, events)
+            if events:
+                write_ics(events, source_ics, calendar_name=source.get("name", slug))
+                all_events.extend(events)
+            else:
+                skipped_sources.append(slug)
 
     unique_events, duplicates = dedupe_events(all_events, args.registry)
-    attach_scores(unique_events, scoring_config)
+    attach_scores(unique_events, scoring_config, preferences)
 
     merged_jsonl = Path("data/merged/all_events.jsonl")
     merged_ics = Path("data/merged/all_events.ics")
     write_jsonl(merged_jsonl, unique_events)
     write_ics(unique_events, merged_ics, calendar_name="Spiceflow Social — merged")
 
-    portfolio = choose_portfolio(unique_events, scoring_config)
+    portfolio = choose_portfolio(unique_events, scoring_config, preferences)
     portfolio_path = Path("data/out/portfolio.json")
     write_portfolio(portfolio, portfolio_path)
 
@@ -185,7 +158,14 @@ def main() -> None:
     write_ics(portfolio["selected"], winners_remove, calendar_name="Spiceflow Social — rollback", cancelled=True)
 
     run_report_path = batch_dir / "run_report.md"
-    write_run_report(run_report_path, events=unique_events, duplicates=duplicates, skipped_sources=skipped_sources)
+    write_run_report(
+        run_report_path,
+        events=unique_events,
+        duplicates=duplicates,
+        skipped_sources=skipped_sources,
+        portfolio_summary=portfolio.get("summary"),
+        research_summaries=research_summaries,
+    )
 
     print(f"Run complete: {len(unique_events)} events, {len(portfolio['selected'])} selected")
 
