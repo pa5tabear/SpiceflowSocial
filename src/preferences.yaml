@@ -125,6 +125,5 @@ exceptions:
   - last tickets
   - limited capacity
 calendar:
-  target_name: Ann Arbor Events and Activities
-  import_notes: Import winners.ics into the Ann Arbor Events and Activities calendar
-    only.
+  target_name: "Ann Arbor Events & Activities"
+  import_notes: "Import winners.ics into the Ann Arbor Events & Activities calendar only."

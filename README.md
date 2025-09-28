@@ -37,7 +37,7 @@ Outputs are stored in `data/`:
 Tune `src/sources.yaml` to add/remove feeds and `src/scoring_config.json` to tweak your weighting for career, social, wellbeing,
 and outdoors priorities.
 
-- **Calendar sandbox:** Create a dedicated Apple/Google calendar (default name `Spiceflow Social (AI Sandbox)` in `src/preferences.yaml`) and import only the generated `winners.ics` into that calendar.
+- **Calendar sandbox:** Create a dedicated Apple/Google calendar (e.g., `Ann Arbor Events & Activities` configured in `src/preferences.yaml`) and import only the generated `winners.ics` into that calendar.
 
 ## Vision & Objectives
 

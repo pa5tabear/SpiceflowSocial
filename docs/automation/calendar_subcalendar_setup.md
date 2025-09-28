@@ -10,7 +10,7 @@ winners back into a dedicated sub-calendar that the AI owns.
 ### Apple Calendar (entry point)
 1. Open Apple Calendar.
 2. In the sidebar, under *On My Mac* or your Google account, create a new
-   calendar named **“Spiceflow Social (AI Sandbox)”**.
+   calendar named **“Ann Arbor Events & Activities”**.
 3. Ensure Google sync is enabled (System Settings → Internet Accounts → your
    Google account → enable *Calendars*).
 
@@ -37,7 +37,7 @@ Each run writes:
 - `data/out/winners-REMOVE.ics` (rollback that cancels every event)
 
 To keep writes compartmentalised:
-1. In Apple Calendar, highlight **Spiceflow Social (AI Sandbox)** only.
+1. In Apple Calendar, highlight **Ann Arbor Events & Activities** only.
 2. Use *File → Import…* and select `winners.ics`.
 3. In the dialog, choose the sandbox calendar as the destination.
 4. To roll back, import `winners-REMOVE.ics` into the same calendar.
@@ -48,7 +48,7 @@ Save the script below as `automation/import_to_spiceflow_calendar.applescript`
 and run with `osascript` to automate imports.
 
 ```applescript
-set calendarName to "Spiceflow Social (AI Sandbox)"
+set calendarName to "Ann Arbor Events & Activities"
 set icsPath to POSIX file "~/SpiceflowSocial/data/out/winners.ics"
 
 tell application "Calendar"
@@ -69,7 +69,7 @@ run it manually after the pipeline completes.
 - `src/preferences.yaml` now includes:
   ```yaml
   calendar:
-    target_name: "Spiceflow Social (AI Sandbox)"
+    target_name: "Ann Arbor Events & Activities"
     import_notes: "Import winners.ics into this calendar only."
   ```
   Update these values if you rename the calendar; `run_all.py` reads them when

@@ -64,12 +64,12 @@ def goal_keywords_from_config(scoring_config: Dict[str, Any]) -> Dict[str, Itera
 
 def target_calendar_name(preferences: Dict[str, Any]) -> str:
     calendar = preferences.get("calendar", {})
-    return str(calendar.get("target_name", "Spiceflow Social (AI)"))
+    return str(calendar.get("target_name", "Ann Arbor Events & Activities"))
 
 
 def calendar_import_notes(preferences: Dict[str, Any]) -> str:
     calendar = preferences.get("calendar", {})
-    return str(calendar.get("import_notes", "Import the generated ICS into the dedicated Spiceflow Social calendar."))
+    return str(calendar.get("import_notes", "Import the generated ICS into the Ann Arbor Events & Activities calendar."))
 
 
 __all__ = [

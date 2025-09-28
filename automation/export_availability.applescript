@@ -1,5 +1,5 @@
 -- Export non-sandbox calendars to an ICS snapshot for Spiceflow Social
-property sandbox_calendar_name : "Ann Arbor Events and Activities"
+property sandbox_calendar_name : "Ann Arbor Events & Activities"
 property calendars_to_export : {}
 
 tell application "Calendar"

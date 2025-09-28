@@ -1,4 +1,4 @@
-set calendarName to "Ann Arbor Events and Activities"
+set calendarName to "Ann Arbor Events & Activities"
 set repoPath to POSIX path of (do shell script "pwd")
 set winnersPath to repoPath & "/data/out/winners.ics"
 
