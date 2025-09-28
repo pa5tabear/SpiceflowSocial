@@ -8,6 +8,7 @@ from preferences import (
     expand_goal_weights,
     load_preferences,
     must_see_keywords,
+    target_calendar_name,
 )
 
 
@@ -45,3 +46,13 @@ def test_category_map_lowercases_keys() -> None:
 def test_must_see_keywords_returns_list() -> None:
     keywords = must_see_keywords({"categories": {"must_see_keywords": ["keynote"]}})
     assert "keynote" in keywords
+
+
+def test_target_calendar_name_defaults():
+    prefs = {}
+    assert target_calendar_name(prefs) == "Spiceflow Social (AI)"
+
+
+def test_target_calendar_name_from_preferences():
+    prefs = {"calendar": {"target_name": "Sandbox"}}
+    assert target_calendar_name(prefs) == "Sandbox"

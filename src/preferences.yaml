@@ -105,3 +105,7 @@ exceptions:
     - "registration closing"
     - "last tickets"
     - "limited capacity"
+
+calendar:
+  target_name: "Spiceflow Social (AI Sandbox)"
+  import_notes: "Import winners.ics into this calendar only."

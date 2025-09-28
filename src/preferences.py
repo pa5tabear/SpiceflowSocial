@@ -62,6 +62,16 @@ def goal_keywords_from_config(scoring_config: Dict[str, Any]) -> Dict[str, Itera
     return scoring_config.get("goal_keywords", {})
 
 
+def target_calendar_name(preferences: Dict[str, Any]) -> str:
+    calendar = preferences.get("calendar", {})
+    return str(calendar.get("target_name", "Spiceflow Social (AI)"))
+
+
+def calendar_import_notes(preferences: Dict[str, Any]) -> str:
+    calendar = preferences.get("calendar", {})
+    return str(calendar.get("import_notes", "Import the generated ICS into the dedicated Spiceflow Social calendar."))
+
+
 __all__ = [
     "load_preferences",
     "expand_goal_weights",
@@ -69,4 +79,6 @@ __all__ = [
     "must_see_keywords",
     "quiet_windows_from_preferences",
     "goal_keywords_from_config",
+    "target_calendar_name",
+    "calendar_import_notes",
 ]

@@ -13,7 +13,7 @@ from emit.ics_writer import write_ics
 from emit.reports import write_run_report
 from plan.choose import choose_portfolio, write_portfolio
 from plan.score import attach_scores
-from preferences import load_preferences
+from preferences import load_preferences, target_calendar_name
 from research import gather_llm_research
 from availability import load_calendar_events, summarise_evenings, write_availability_markdown
 from emit.shortlist import write_shortlist_report
@@ -163,10 +163,11 @@ def main() -> None:
     write_portfolio(portfolio, portfolio_path)
     write_shortlist_report(Path("data/out/shortlist.md"), portfolio["selected"])
 
+    target_calendar = target_calendar_name(preferences)
     winners_ics = Path("data/out/winners.ics")
-    write_ics(portfolio["selected"], winners_ics, calendar_name="Spiceflow Social — winners")
+    write_ics(portfolio["selected"], winners_ics, calendar_name=target_calendar)
     winners_remove = Path("data/out/winners-REMOVE.ics")
-    write_ics(portfolio["selected"], winners_remove, calendar_name="Spiceflow Social — rollback", cancelled=True)
+    write_ics(portfolio["selected"], winners_remove, calendar_name=f"{target_calendar} (Rollback)", cancelled=True)
 
     run_report_path = batch_dir / "run_report.md"
     write_run_report(
