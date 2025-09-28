@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
-from typing import Iterable, List, Optional
+from typing import Iterable, List, Optional, Dict
 
 from util.timez import DEFAULT_TIMEZONE
 
@@ -16,6 +16,7 @@ def write_run_report(
     skipped_sources: list[str],
     portfolio_summary: Optional[dict] = None,
     research_summaries: Optional[List[dict]] = None,
+    availability_summary: Optional[Dict[str, Dict[str, str]]] = None,
 ) -> None:
     now = datetime.now(DEFAULT_TIMEZONE)
     lines = [
@@ -48,6 +49,10 @@ def write_run_report(
                 lines.append(
                     f"  * Monthly {goal}: {payload.get('count', 0)}/{payload.get('target', 0)}"
                 )
+
+    if availability_summary:
+        free_days = [day for day, payload in availability_summary.items() if payload.get("status") == "free"]
+        lines.extend(["", "## Availability Overview", f"- Free evenings: {len(free_days)}", f"- Total tracked evenings: {len(availability_summary)}"])
 
     if research_summaries:
         lines.extend(["", "## LLM Research Highlights"])

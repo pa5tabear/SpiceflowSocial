@@ -15,6 +15,8 @@ from plan.choose import choose_portfolio, write_portfolio
 from plan.score import attach_scores
 from preferences import load_preferences
 from research import gather_llm_research
+from availability import load_calendar_events, summarise_evenings, write_availability_markdown
+from emit.shortlist import write_shortlist_report
 from util.dedupe import dedupe_events
 from util.timez import DEFAULT_TIMEZONE
 
@@ -87,11 +89,19 @@ def main() -> None:
     parser.add_argument("--scoring-config", type=Path, default=Path("src/scoring_config.json"))
     parser.add_argument("--preferences", type=Path, default=Path("src/preferences.yaml"))
     parser.add_argument("--registry", type=Path, default=Path("src/registry.json"))
+    parser.add_argument("--availability-ics", type=Path, default=Path("data/availability/calendar.ics"))
     args = parser.parse_args()
 
     sources = load_sources(args.sources)
     scoring_config = load_scoring_config(args.scoring_config)
     preferences = load_preferences(args.preferences)
+
+    availability_summary = {}
+    if args.availability_ics and args.availability_ics.exists():
+        availability_events = load_calendar_events(args.availability_ics)
+        availability_summary = summarise_evenings(availability_events, preferences=preferences, horizon_days=args.horizon_days)
+        if availability_summary:
+            write_availability_markdown(Path('data/out/availability.md'), availability_summary)
 
     run_date = datetime.now(DEFAULT_TIMEZONE).date().isoformat()
     batch_dir = Path("data/events_batches") / f"batch_{run_date}"
@@ -151,6 +161,7 @@ def main() -> None:
     portfolio = choose_portfolio(unique_events, scoring_config, preferences)
     portfolio_path = Path("data/out/portfolio.json")
     write_portfolio(portfolio, portfolio_path)
+    write_shortlist_report(Path("data/out/shortlist.md"), portfolio["selected"])
 
     winners_ics = Path("data/out/winners.ics")
     write_ics(portfolio["selected"], winners_ics, calendar_name="Spiceflow Social — winners")
@@ -165,6 +176,7 @@ def main() -> None:
         skipped_sources=skipped_sources,
         portfolio_summary=portfolio.get("summary"),
         research_summaries=research_summaries,
+        availability_summary=availability_summary if availability_summary else None,
     )
 
     print(f"Run complete: {len(unique_events)} events, {len(portfolio['selected'])} selected")

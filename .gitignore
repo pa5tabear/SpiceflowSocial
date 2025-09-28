@@ -13,3 +13,7 @@ data/out/*
 !data/out/.gitkeep
 data/research/*
 !data/research/.gitkeep
+
+data/availability/*
+!data/availability/.gitkeep
+!data/availability/sample_calendar.ics
