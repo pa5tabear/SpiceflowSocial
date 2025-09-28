@@ -1,36 +1,47 @@
 meta:
-  tz: "America/Detroit"
-  home_city: "Ann Arbor, MI"
+  tz: America/Detroit
+  home_city: Ann Arbor, MI
   stable_plan_bias: true
-
 time_windows:
   evenings:
-    weekdays: ["17:30", "21:30"]
-    saturday: ["10:00", "22:00"]
-    sunday: ["11:00", "20:00"]
-  quiet_hours: ["22:30", "07:00"]
+    weekdays:
+    - '17:30'
+    - '21:30'
+    saturday:
+    - '10:00'
+    - '22:00'
+    sunday:
+    - '11:00'
+    - '20:00'
+  quiet_hours:
+  - '22:30'
+  - 07:00
   no_change_window_hours: 24
-
 caps:
   max_per_day: 2
   max_per_week: 6
   max_weekend_total: 4
   daily_change_budget: 2
   weekly_change_budget: 6
-
 budgets:
   weekly_spend_cap_usd: 150
   allow_overage_events_per_week: 1
-
 travel:
-  origin: "Ann Arbor, MI"
+  origin: Ann Arbor, MI
   bins:
-    - { label: "near", minutes_max: 15, score_bonus: 0.05 }
-    - { label: "local", minutes_max: 30, score_bonus: 0.02 }
-    - { label: "far", minutes_max: 45, score_penalty: -0.06 }
-    - { label: "too_far", minutes_max: 999, score_penalty: -0.12 }
+  - label: near
+    minutes_max: 15
+    score_bonus: 0.05
+  - label: local
+    minutes_max: 30
+    score_bonus: 0.02
+  - label: far
+    minutes_max: 45
+    score_penalty: -0.06
+  - label: too_far
+    minutes_max: 999
+    score_penalty: -0.12
   suppress_too_far: false
-
 quotas:
   weekly:
     career_tech_min: 2
@@ -41,25 +52,25 @@ quotas:
     arts_culture_min: 2
     outdoors_min: 2
     major_flagship_min: 1
-
 weights:
   goals:
     career_learning: 0.25
-    social_connection: 0.20
+    social_connection: 0.2
     wellbeing_fitness: 0.15
-    outdoors_nature: 0.10
+    outdoors_nature: 0.1
   novelty: 0.05
-  speaker_org_relevance: 0.10
-  travel_time_penalty: -0.10
+  speaker_org_relevance: 0.1
+  travel_time_penalty: -0.1
   cost_penalty: -0.05
-  conflict_overlap_penalty: -0.20
+  conflict_overlap_penalty: -0.2
   sticky_keep_bonus: 0.15
-  must_see_bonus: 0.20
-
+  must_see_bonus: 0.2
 preferences:
   start_time:
-    ideal_weeknight_range: ["18:00", "19:30"]
-    late_start_penalty_after: "20:00"
+    ideal_weeknight_range:
+    - '18:00'
+    - '19:30'
+    late_start_penalty_after: '20:00'
     late_start_penalty: -0.04
   duration_defaults:
     lecture_minutes: 75
@@ -69,43 +80,51 @@ preferences:
     tier1_bonus: 0.06
     tier2_bonus: 0.02
     tier3_penalty: -0.04
-
 categories:
   map:
-    Lecture: ["career_learning"]
-    Tech: ["career_learning", "social_connection"]
-    Business: ["career_learning"]
-    Climate: ["career_learning"]
-    Arts: ["social_connection"]
-    Music: ["social_connection"]
-    Wellness: ["wellbeing_fitness"]
-    Outdoors: ["outdoors_nature", "wellbeing_fitness"]
-    Community: ["social_connection"]
+    Lecture:
+    - career_learning
+    Tech:
+    - career_learning
+    - social_connection
+    Business:
+    - career_learning
+    Climate:
+    - career_learning
+    Arts:
+    - social_connection
+    Music:
+    - social_connection
+    Wellness:
+    - wellbeing_fitness
+    Outdoors:
+    - outdoors_nature
+    - wellbeing_fitness
+    Community:
+    - social_connection
   must_see_keywords:
-    - "keynote"
-    - "Granholm"
-    - "conference"
-    - "summit"
-    - "Climate Week"
-    - "MSBC"
-    - "Farrand"
-
+  - keynote
+  - Granholm
+  - conference
+  - summit
+  - Climate Week
+  - MSBC
+  - Farrand
 anti_churn:
   min_swap_gain: 0.22
   cooldown_days_per_slot: 5
   freeze_hours_near_term: 24
-
 exceptions:
   always_surface:
-    - "Cancelled"
-    - "Postponed"
-    - "Venue change"
-    - "Time change"
+  - Cancelled
+  - Postponed
+  - Venue change
+  - Time change
   urgent_override_keywords:
-    - "registration closing"
-    - "last tickets"
-    - "limited capacity"
-
+  - registration closing
+  - last tickets
+  - limited capacity
 calendar:
-  target_name: "Spiceflow Social (AI Sandbox)"
-  import_notes: "Import winners.ics into this calendar only."
+  target_name: Ann Arbor Events and Activities
+  import_notes: Import winners.ics into the Ann Arbor Events and Activities calendar
+    only.

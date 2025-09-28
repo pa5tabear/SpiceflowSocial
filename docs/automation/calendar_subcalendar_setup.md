@@ -79,3 +79,45 @@ run it manually after the pipeline completes.
 
 Following these steps ensures the AI **reads broadly** but **writes narrowly** to
 its sandbox, keeping human-owned calendars safe.
+
+## 6. Daily automation (optional)
+
+Run the helper script to automate the full loop (export → plan → import):
+
+```bash
+chmod +x automation/spiceflow_daily.sh
+./automation/spiceflow_daily.sh
+```
+
+Schedule it with `launchd` by creating a plist like:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>com.matt.spiceflow.daily</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/bin/zsh</string>
+      <string>-lc</string>
+      <string>cd /Users/mattkirsch/SpiceflowSocial && ./automation/spiceflow_daily.sh</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>86400</integer>
+    <key>StandardOutPath</key>
+    <string>/tmp/spiceflow_daily.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/spiceflow_daily.log</string>
+  </dict>
+</plist>
+```
+
+Load it with:
+
+```bash
+launchctl load ~/Library/LaunchAgents/com.matt.spiceflow.daily.plist
+```
+
+The script calls the export AppleScript to read all calendars (excluding the sandbox), runs the planner, and re-imports the winners into the sandbox calendar automatically.
