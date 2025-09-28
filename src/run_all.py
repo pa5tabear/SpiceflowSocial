@@ -137,7 +137,7 @@ def main() -> None:
     parser.add_argument("--horizon-days", type=int, default=45)
     parser.add_argument("--include-js", action="store_true", help="Allow Playwright-backed JS scrapers")
     parser.add_argument("--weekly-pass", action="store_true", help="Tag this run as the weekly JS sweep")
-    parser.add_argument("--sources", type=Path, default=Path("src/sources.md"))
+    parser.add_argument("--sources", type=Path, default=Path("src/sources.yaml"))
     parser.add_argument("--scoring-config", type=Path, default=Path("src/scoring_config.json"))
     parser.add_argument("--registry", type=Path, default=Path("src/registry.json"))
     args = parser.parse_args()

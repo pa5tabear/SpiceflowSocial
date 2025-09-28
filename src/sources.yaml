@@ -1,0 +1,164 @@
+- name: "ID Day 2025"
+  slug: "id_day_2025"
+  type: "jsonld"
+  url: "https://events.umich.edu/event/138552"
+  city: "Ann Arbor, MI"
+  category: "Science"
+  venue: "U-M Museum of Natural History"
+  tags: ["hands-on", "family", "curiosity"]
+
+- name: "Farrand Memorial Lecture 2025"
+  slug: "farrand_memorial_lecture_2025"
+  type: "jsonld"
+  url: "https://events.umich.edu/event/138553"
+  city: "Ann Arbor, MI"
+  category: "Lecture"
+  venue: "U-M Museum of Natural History"
+  tags: ["climate", "art", "ai"]
+
+- name: "Fresh Check Day 2025"
+  slug: "fresh_check_day_2025"
+  type: "jsonld"
+  url: "https://events.umich.edu/event/139471"
+  city: "Ann Arbor, MI"
+  category: "Wellbeing"
+  venue: "The Diag"
+  tags: ["mental-health", "community"]
+
+- name: "Harvest Fest 2025"
+  slug: "harvest_fest_2025"
+  type: "jsonld"
+  url: "https://mbgna.umich.edu/event/harvest-fest/"
+  city: "Ann Arbor, MI"
+  category: "Outdoors"
+  venue: "Campus Farm @ Matthaei"
+  tags: ["outdoors", "food", "community"]
+
+- name: "Climate Week 2025 Hub"
+  slug: "climate_week_2025"
+  type: "jsonld"
+  url: "https://seas.umich.edu/events/university-michigan-climate-week-2025"
+  city: "Ann Arbor, MI"
+  category: "Climate"
+  venue: "Multiple Venues"
+  tags: ["climate", "networking", "policy"]
+
+- name: "Wege Lecture 2025"
+  slug: "wege_lecture_2025"
+  type: "jsonld"
+  url: "https://seas.umich.edu/news/u-ms-climate-week-feature-granholm-numerous-activities"
+  city: "Ann Arbor, MI"
+  category: "Lecture"
+  venue: "UM SEAS"
+  tags: ["climate", "leadership", "policy"]
+
+- name: "Catherine Chalmers Exhibition"
+  slug: "catherine_chalmers_exhibition"
+  type: "jsonld"
+  url: "https://lsa.umich.edu/humanities/gallery/current-exhibitions/catherine-chalmers.html"
+  city: "Ann Arbor, MI"
+  category: "Arts"
+  venue: "Institute for the Humanities Gallery"
+  tags: ["art", "ecology", "exhibition"]
+
+- name: "Saturday Morning Physics — 30 Years of SMP"
+  slug: "smp_30_years"
+  type: "jsonld"
+  url: "https://events.umich.edu/event/138249"
+  city: "Ann Arbor, MI"
+  category: "Lecture"
+  venue: "Weiser Hall"
+  tags: ["science", "family", "learning"]
+
+- name: "Ta-You Wu Lecture 2025"
+  slug: "ta_you_wu_lecture_2025"
+  type: "jsonld"
+  url: "https://lsa.umich.edu/physics/news-events/special-lectures/ta-you-wu-lecture.html"
+  city: "Ann Arbor, MI"
+  category: "Lecture"
+  venue: "LSA Physics"
+  tags: ["science", "research", "community"]
+
+- name: "FEAST Project Fair 2025"
+  slug: "feast_project_fair_2025"
+  type: "ics"
+  url: "https://events.umich.edu/list/ical?filter=locations%3A181"
+  city: "Ann Arbor, MI"
+  category: "Arts"
+  venue: "Duderstadt Center"
+  tags: ["arts", "engineering", "collaboration"]
+
+- name: "Michigan Arts Festival 2025"
+  slug: "michigan_arts_festival_2025"
+  type: "jsonld"
+  url: "https://arts.umich.edu/fest"
+  city: "Ann Arbor, MI"
+  category: "Arts"
+  venue: "Multiple Venues"
+  tags: ["festival", "arts", "community"]
+
+- name: "Museum of Natural History Feed"
+  slug: "ummnh_feed"
+  type: "ics"
+  url: "https://events.umich.edu/group/3445/ical"
+  city: "Ann Arbor, MI"
+  category: "Science"
+  venue: "U-M Museum of Natural History"
+  tags: ["science", "family", "museum"]
+
+- name: "Saturday Morning Physics Feed"
+  slug: "saturday_morning_physics_feed"
+  type: "ics"
+  url: "https://events.umich.edu/group/1965/ical"
+  city: "Ann Arbor, MI"
+  category: "Lecture"
+  venue: "LSA Physics"
+  tags: ["science", "education", "community"]
+
+- name: "Michigan Backpacking Club"
+  slug: "michigan_backpacking_club"
+  type: "html"
+  url: "https://maizepages.umich.edu/organization/mbc"
+  city: "Ann Arbor, MI"
+  category: "Outdoors"
+  venue: "Various"
+  tags: ["outdoors", "wellbeing", "community"]
+  html:
+    item: "div.uw-entity"
+    title: "h1"
+    datetime: "div.uw-entity__date"
+    location: "div.uw-entity__address"
+    notes: "div.uw-entity__description"
+    url: "a.uw-entity__link::attr(href)"
+
+- name: "U-M Well-Being Collective"
+  slug: "um_wellbeing_collective"
+  type: "html"
+  url: "https://wellbeing.umich.edu/collective/"
+  city: "Ann Arbor, MI"
+  category: "Wellbeing"
+  venue: "Campus-wide"
+  tags: ["wellbeing", "community", "resources"]
+  html:
+    item: "div.view-content article"
+    title: "h2"
+    datetime: "time"
+    location: "div.field--name-field-location"
+    notes: "div.field--name-body"
+    url: "a::attr(href)"
+
+- name: "Ross Business+Tech"
+  slug: "ross_business_tech"
+  type: "html"
+  url: "https://rossbta.com/"
+  city: "Ann Arbor, MI"
+  category: "Career"
+  venue: "Michigan Ross"
+  tags: ["innovation", "business", "technology"]
+  html:
+    item: "article"
+    title: "h2"
+    datetime: "time"
+    location: "div.event-location"
+    notes: "div.entry-content"
+    url: "a::attr(href)"
