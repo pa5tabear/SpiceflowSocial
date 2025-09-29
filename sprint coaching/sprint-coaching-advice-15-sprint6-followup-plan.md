@@ -66,3 +66,42 @@ Date: 2025‑09‑28
 ---
 
 Execute quickly, validate artifacts, and iterate on sources. The goal is a dependable 7‑day plan delivered daily with minimal friction.
+
+## Operational Workflow — Critical Path (Artifact‑First)
+
+- Daily run (single flow)
+  - Research (7‑day):
+    ```bash
+    PERPLEXITY_API_KEY=... SPICEFLOW_PERPLEXITY_MODEL=sonar \
+    bash scripts/perplexity_seven_day.sh --sources src/sources.yaml --out data/research/perplexity_7day
+    ```
+  - Ingest + emit:
+    ```bash
+    python src/run_all.py --use-perplexity --perplexity-dir data/research/perplexity_7day --horizon-days 7
+    ```
+  - Must produce:
+    - `data/out/weekly_review.md`
+    - `data/out/winners.ics` and `data/out/winners-REMOVE.ics`
+    - `data/out/portfolio.json`, `data/out/shortlist.md`
+    - `data/research/perplexity_7day/*.json` (with `notes.evidence`)
+
+- PR rules (artifact‑first)
+  - One focused change per PR (adapter/flag/sources/docs).
+  - Include paths to updated artifacts; no merge without `weekly_review.md` + `winners.ics` present.
+  - No scoring/ICS refactors this sprint.
+
+- Acceptance criteria (DoD)
+  - ≥1 verified event in the 7‑day window; ≥3 total candidates per sweep.
+  - 100% winners have valid event URLs.
+  - `winners.ics` imports without errors; `weekly_review.md` shows a full week or clearly flags gaps.
+
+- Scope guardrails (avoid side quests)
+  - In‑scope: Perplexity adapter/flag, source additions, daily script, minimal docs.
+  - Out‑of‑scope: scoring redesign, UI work, speculative prompts or integrations.
+
+- Fast feedback loop
+  - If a day is empty, first add/adjust sources; then rerun the two commands above.
+  - Keep prompts lean; prefer source coverage over prompt complexity.
+
+- Optional enforcement (recommended)
+  - Add a post‑run check that fails CI/local run if `data/out/weekly_review.md` or `data/out/winners.ics` is missing, to enforce artifact discipline.
